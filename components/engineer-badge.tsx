@@ -5,8 +5,9 @@ import { Lock } from "lucide-react"
 import { getEngineerInitials } from "@/lib/engineer-colors"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
 import type { Engineer, BookedSlot, Candidate } from "@/lib/types"
+import { mockCandidates } from "@/lib/mock-data"
 
-interface EnhancedEngineerBadgeProps {
+interface EngineerBadgeProps {
   engineer: Engineer
   color: string
   status: "available" | "selected" | "booked"
@@ -17,7 +18,7 @@ interface EnhancedEngineerBadgeProps {
   onReschedule?: () => void
 }
 
-export function EnhancedEngineerBadge({
+export function EngineerBadge({
   engineer,
   color,
   status,
@@ -26,13 +27,52 @@ export function EnhancedEngineerBadge({
   onViewDetails,
   onCancelBooking,
   onReschedule,
-}: EnhancedEngineerBadgeProps) {
+}: EngineerBadgeProps) {
   const [showTooltip, setShowTooltip] = useState(false)
   const initials = getEngineerInitials(engineer.name)
 
   const getTooltipContent = () => {
-    if (status === "booked" && bookingDetails && candidate) {
-      return `${engineer.name} ↔️ ${candidate.name} (confirmed)`
+    if (status === "booked" && bookingDetails) {
+      const bookedCandidate = mockCandidates.find((c) => c.id === bookingDetails.candidateId)
+
+      const formatInterviewType = (type?: string) => {
+        switch (type) {
+          case "video":
+            return "📹 Video Call"
+          case "phone":
+            return "📞 Phone"
+          case "in-person":
+            return "🏢 In Person"
+          default:
+            return "📹 Video Call"
+        }
+      }
+
+      const getEndTime = (startTime: string, duration: number) => {
+        const [hours, minutes] = startTime.split(":").map(Number)
+        const totalMinutes = hours * 60 + minutes + duration
+        const endHours = Math.floor(totalMinutes / 60)
+        const endMins = totalMinutes % 60
+        return `${endHours.toString().padStart(2, "0")}:${endMins.toString().padStart(2, "0")}`
+      }
+
+      return (
+        <div className="space-y-2">
+          <div className="font-medium text-center border-b border-gray-600 pb-1">
+            {bookingDetails.startTime}–{getEndTime(bookingDetails.startTime, bookingDetails.duration)}
+          </div>
+          <div className="text-xs space-y-1">
+            <div className="font-medium">
+              {bookedCandidate?.name} ↔️ {engineer.name}
+            </div>
+            <div className="text-gray-300 space-y-0.5">
+              <div>⏱️ {bookingDetails.duration} minutes</div>
+              <div>{formatInterviewType(bookingDetails.interviewType)}</div>
+              <div className="text-green-300">✅ Confirmed</div>
+            </div>
+          </div>
+        </div>
+      )
     }
     return `${engineer.name} available`
   }
@@ -77,9 +117,15 @@ export function EnhancedEngineerBadge({
 
       {showTooltip && (
         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50 animate-in fade-in-0 zoom-in-95 duration-150">
-          <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
-            <div className="font-medium">{getTooltipContent()}</div>
-            {status === "available" && <div className="text-gray-300">{engineer.role}</div>}
+          <div className="bg-gray-900 text-white text-xs rounded-lg px-4 py-3 shadow-lg min-w-48">
+            {status === "booked" ? (
+              getTooltipContent()
+            ) : (
+              <div>
+                <div className="font-medium">{getTooltipContent()}</div>
+                <div className="text-gray-300">{engineer.role}</div>
+              </div>
+            )}
             <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
           </div>
         </div>
