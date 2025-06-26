@@ -40,9 +40,3 @@ export interface BookedSlot {
 export interface ViewSettings {
   showBookedOnly: boolean
 }
-
-export interface BadgeState {
-  engineer: Engineer
-  status: "available" | "selected" | "booked"
-  bookingDetails?: BookedSlot
-}
