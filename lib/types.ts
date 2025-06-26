@@ -33,4 +33,16 @@ export interface BookedSlot {
   startTime: string
   duration: number
   bookedAt: Date
+  status: "confirmed" | "pending" | "cancelled"
+  interviewType?: "video" | "phone" | "in-person"
+}
+
+export interface ViewSettings {
+  showBookedOnly: boolean
+}
+
+export interface BadgeState {
+  engineer: Engineer
+  status: "available" | "selected" | "booked"
+  bookingDetails?: BookedSlot
 }
