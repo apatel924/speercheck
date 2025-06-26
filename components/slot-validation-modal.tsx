@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { AlertTriangle, Calendar, Clock, User, Users } from "lucide-react"
 import type { Candidate, Engineer, TimeSlot } from "@/lib/types"
+import { formatTime, getEndTime } from "@/lib/utils"
 
 interface SlotValidationModalProps {
   candidate: Candidate
@@ -24,22 +25,6 @@ export function SlotValidationModal({
   onAccept,
   onCancel,
 }: SlotValidationModalProps) {
-  const formatTime = (time: string) => {
-    const [hours, minutes] = time.split(":")
-    const hour = Number.parseInt(hours)
-    const ampm = hour >= 12 ? "PM" : "AM"
-    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
-    return `${displayHour}:${minutes} ${ampm}`
-  }
-
-  const getEndTime = (startTime: string, duration: number) => {
-    const [hours, minutes] = startTime.split(":").map(Number)
-    const totalMinutes = hours * 60 + minutes + duration
-    const endHours = Math.floor(totalMinutes / 60)
-    const endMins = totalMinutes % 60
-    return `${endHours.toString().padStart(2, "0")}:${endMins.toString().padStart(2, "0")}`
-  }
-
   return (
     <Dialog open={true} onOpenChange={onCancel}>
       <DialogContent className="sm:max-w-lg animate-in slide-in-from-bottom-4 duration-300">
