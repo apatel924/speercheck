@@ -1,16 +1,16 @@
 "use client"
 
 import { useMemo } from "react"
-import { EngineerBadge } from "@/components/engineer-badge"
+import { EngineerBadge } from "./engineer-badge"
 import { getAvailableSlots, getAllSlotBookings, getBookedEngineersInSlot } from "@/lib/calendar-utils"
-import { getEngineerColor } from "@/lib/engineer-colors"
-import type { Candidate, Engineer, BookedSlot, TimeSlot, ViewSettings } from "@/lib/types"
+import { getEngineerColor, formatTimeToAMPM } from "@/lib/utils"
 import { mockEngineers } from "@/lib/mock-data"
+import type { Candidate, Engineer, BookedSlot, TimeSlot, ViewSettings } from "@/lib/types"
 
 interface WeeklyCalendarProps {
   selectedCandidate: Candidate | null
   selectedEngineers: Engineer[]
-  duration: 15 | 30 | 60
+  duration: 30 | 60
   bookedSlots: BookedSlot[]
   viewSettings: ViewSettings
   onSlotClick: (timeSlot: TimeSlot, engineer: Engineer) => void
@@ -41,22 +41,6 @@ const timeSlots = [
   "17:30",
 ]
 
-// Convert 24-hour time to 12-hour AM/PM format
-const formatTimeToAMPM = (time: string) => {
-  const [hours, minutes] = time.split(":")
-  const hour = Number.parseInt(hours)
-  const ampm = hour >= 12 ? "PM" : "AM"
-  const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
-  return `${displayHour}:${minutes} ${ampm}`
-}
-
-// Type for engineer state in a slot
-type EngineerState = {
-  engineer: Engineer
-  status: "booked" | "available"
-  bookingDetails?: BookedSlot
-}
-
 export function WeeklyCalendar({
   selectedCandidate,
   selectedEngineers,
@@ -80,54 +64,39 @@ export function WeeklyCalendar({
     const slotBookings = getAllSlotBookings(bookedSlots, day, time)
 
     if (viewSettings.showBookedOnly) {
-      // Show ALL booked engineers in this slot, regardless of selection
       const bookedEngineersInSlot = getBookedEngineersInSlot(bookedSlots, mockEngineers, day, time)
-      const engineerStates: EngineerState[] = bookedEngineersInSlot.map((engineer: Engineer) => {
+      const engineerStates = bookedEngineersInSlot.map((engineer) => {
         const booking = slotBookings.find((b) => b.engineerId === engineer.id)
         return {
           engineer,
-          status: "booked",
+          status: "booked" as const,
           bookingDetails: booking!,
         }
       })
 
-      return {
-        engineerStates,
-        slotBookings,
-        isFullyBooked: false, // Never fully booked in show-all mode
-      }
+      return { engineerStates, isFullyBooked: false }
     }
 
-    // Normal mode: show only selected engineers and their availability
-    const availableEngineers: Engineer[] = availableSlots.get(slotKey) || []
-    const engineerStates: EngineerState[] = availableEngineers.map((engineer: Engineer) => {
+    const availableEngineers = availableSlots.get(slotKey) || []
+    const engineerStates = availableEngineers.map((engineer) => {
       const booking = slotBookings.find((b) => b.engineerId === engineer.id)
       return {
         engineer,
-        status: booking ? "booked" : "available",
+        status: booking ? ("booked" as const) : ("available" as const),
         bookingDetails: booking,
       }
     })
 
-    // Only consider it fully booked if ALL selected engineers are booked
     const isFullyBooked =
       availableEngineers.length > 0 &&
-      availableEngineers.every((eng: Engineer) => slotBookings.some((b) => b.engineerId === eng.id))
+      availableEngineers.every((eng) => slotBookings.some((b) => b.engineerId === eng.id))
 
-    return { engineerStates, slotBookings, isFullyBooked }
-  }
-
-  const getCellBackgroundClass = (day: string, time: string) => {
-    const { engineerStates, isFullyBooked } = getSlotData(day, time)
-
-    if (isFullyBooked) return "bg-red-50 dark:bg-red-900/20"
-    if (engineerStates.some((s: EngineerState) => s.status === "available")) return "hover:bg-blue-50 dark:hover:bg-blue-900/20"
-    return "bg-white dark:bg-gray-800"
+    return { engineerStates, isFullyBooked }
   }
 
   const handleSlotClick = (day: string, time: string) => {
     const { engineerStates } = getSlotData(day, time)
-    const availableEngineer = engineerStates.find((s: EngineerState) => s.status === "available")?.engineer
+    const availableEngineer = engineerStates.find((s) => s.status === "available")?.engineer
 
     if (availableEngineer) {
       onSlotClick({ day, startTime: time }, availableEngineer)
@@ -157,7 +126,6 @@ export function WeeklyCalendar({
 
   return (
     <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-      {/* Header */}
       <div className="grid grid-cols-6 bg-gray-50 dark:bg-gray-700">
         <div className="p-3 border-r border-gray-200 dark:border-gray-600 font-medium text-gray-700 dark:text-gray-300 text-sm">
           Time
@@ -173,48 +141,46 @@ export function WeeklyCalendar({
         ))}
       </div>
 
-      {/* Time Slots */}
-      {timeSlots.map((time, timeIndex) => (
-        <div key={time} className={`grid grid-cols-6 border-b border-gray-200 dark:border-gray-700 last:border-b-0`}>
+      {timeSlots.map((time) => (
+        <div key={time} className="grid grid-cols-6 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
           <div className="p-3 border-r border-gray-200 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center bg-gray-50 dark:bg-gray-700">
             {formatTimeToAMPM(time)}
           </div>
           {days.map((day) => {
-            const { engineerStates, slotBookings } = getSlotData(day, time)
-            const slotKey = `${day}-${time}`
-            const hasAvailableEngineers = engineerStates.some((s: EngineerState) => s.status === "available")
+            const { engineerStates, isFullyBooked } = getSlotData(day, time)
+            const hasAvailableEngineers = engineerStates.some((s) => s.status === "available")
 
             return (
               <div
-                key={slotKey}
-                className={`p-2 border-r border-gray-200 dark:border-gray-600 last:border-r-0 h-12 relative transition-all duration-150 ${getCellBackgroundClass(day, time)} ${
-                  hasAvailableEngineers ? "cursor-pointer hover:shadow-sm" : ""
+                key={`${day}-${time}`}
+                className={`p-2 border-r border-gray-200 dark:border-gray-600 last:border-r-0 h-12 relative transition-all duration-150 ${
+                  isFullyBooked
+                    ? "bg-red-50 dark:bg-red-900/20"
+                    : hasAvailableEngineers
+                      ? "hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-pointer hover:shadow-sm"
+                      : "bg-white dark:bg-gray-800"
                 }`}
                 onClick={() => handleSlotClick(day, time)}
               >
-                {/* Show "Booked" indicator if fully booked */}
-                {engineerStates.length > 0 && engineerStates.every((s: EngineerState) => s.status === "booked") && (
+                {isFullyBooked && (
                   <div className="absolute top-1 right-1">
                     <div className="bg-red-500 text-white text-xs px-1 py-0.5 rounded text-[10px]">Booked</div>
                   </div>
                 )}
 
-                {/* Engineer badges */}
                 <div className="flex flex-wrap gap-1 items-start justify-start">
-                  {engineerStates.map(
-                    ({ engineer, status, bookingDetails }: { engineer: Engineer; status: "booked" | "available"; bookingDetails?: BookedSlot }) => (
-                        <EngineerBadge
-                        key={engineer.id}
-                        engineer={engineer}
-                        color={getEngineerColor(engineer.id)}
-                        status={status}
-                        bookingDetails={bookingDetails}
-                        candidate={selectedCandidate}
-                        onViewDetails={() => bookingDetails && onViewBookingDetails(bookingDetails)}
-                        onCancelBooking={() => bookingDetails && onCancelBooking(bookingDetails.id)}
-                        onReschedule={() => bookingDetails && onRescheduleBooking(bookingDetails.id)}
-                      />
-                    ))}
+                  {engineerStates.map(({ engineer, status, bookingDetails }) => (
+                    <EngineerBadge
+                      key={engineer.id}
+                      engineer={engineer}
+                      color={getEngineerColor(engineer.id)}
+                      status={status}
+                      bookingDetails={bookingDetails}
+                      onViewDetails={() => bookingDetails && onViewBookingDetails(bookingDetails)}
+                      onCancelBooking={() => bookingDetails && onCancelBooking(bookingDetails.id)}
+                      onReschedule={() => bookingDetails && onRescheduleBooking(bookingDetails.id)}
+                    />
+                  ))}
                 </div>
               </div>
             )
