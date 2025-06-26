@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
-import { getEngineerColor, getEngineerInitials, generateEmail } from "@/lib/utils"
+// Removed getEngineerColor, getEngineerInitials, generateEmail imports
 import type { Engineer } from "@/lib/types"
 
 interface EngineerFilterProps {
@@ -94,8 +94,8 @@ export function EngineerFilter({ engineers, selectedEngineers, onSelectionChange
           <div className="max-h-80 overflow-y-auto p-2">
             {filteredEngineers.map((engineer) => {
               const isSelected = selectedEngineers.some((e) => e.id === engineer.id)
-              const initials = getEngineerInitials(engineer.name)
-              const email = generateEmail(engineer.name, "company.com")
+              // Use engineer.color and engineer.email directly, initials from name
+              const initials = engineer.name.split(" ").map(n => n[0]).join("").slice(0,2)
 
               return (
                 <div
@@ -118,13 +118,13 @@ export function EngineerFilter({ engineers, selectedEngineers, onSelectionChange
                     }`}
                   />
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${getEngineerColor(engineer.id)}`}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${engineer.color}`}
                   >
                     {initials}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-gray-900 dark:text-gray-100 truncate">{engineer.name}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 truncate">{email}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 truncate">{engineer.email}</div>
                   </div>
                 </div>
               )
@@ -145,7 +145,7 @@ export function EngineerFilter({ engineers, selectedEngineers, onSelectionChange
               variant="secondary"
               className="flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700"
             >
-              <div className={`w-2 h-2 rounded-full ${getEngineerColor(engineer.id)}`} />
+              <div className={`w-2 h-2 rounded-full ${engineer.color}`} />
               <span className="text-xs font-medium">{engineer.name}</span>
               <button
                 onClick={() => removeEngineer(engineer.id)}
