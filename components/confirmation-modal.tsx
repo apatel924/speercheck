@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Calendar, Clock, User, Users, Check } from "lucide-react"
+import { Calendar, Clock, User, Users, Check, MapPin, Video, Phone } from "lucide-react"
 import type { Candidate, Engineer, TimeSlot } from "@/lib/types"
 
 interface ConfirmationModalProps {
@@ -25,6 +25,7 @@ export function ConfirmationModal({
 }: ConfirmationModalProps) {
   const [isConfirming, setIsConfirming] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [interviewType, setInterviewType] = useState<"video" | "phone" | "in-person">("video")
 
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(":")
@@ -46,16 +47,16 @@ export function ConfirmationModal({
     setIsConfirming(true)
 
     // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    await new Promise((resolve) => setTimeout(resolve, 800))
 
     setShowSuccess(true)
 
-    // Show success animation for 1.5 seconds
+    // Show success animation for 2 seconds
     setTimeout(() => {
       onConfirm()
       setIsConfirming(false)
       setShowSuccess(false)
-    }, 1500)
+    }, 2000)
   }
 
   if (showSuccess) {
@@ -63,11 +64,24 @@ export function ConfirmationModal({
       <Dialog open={true} onOpenChange={() => {}}>
         <DialogContent className="sm:max-w-md">
           <div className="flex flex-col items-center justify-center py-8">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 animate-in zoom-in-50 duration-300">
-              <Check className="w-8 h-8 text-green-600 animate-in zoom-in-50 duration-500" />
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 animate-in zoom-in-50 duration-300">
+              <Check className="w-10 h-10 text-green-600 animate-in zoom-in-50 duration-500" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Interview Scheduled!</h3>
-            <p className="text-gray-600 text-center">The interview has been successfully booked.</p>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">Interview Scheduled!</h3>
+            <p className="text-gray-600 text-center mb-4">
+              The interview has been successfully booked and calendar invites will be sent shortly.
+            </p>
+            <div className="bg-gray-50 rounded-lg p-4 w-full">
+              <div className="text-sm text-gray-600">
+                <div className="font-medium">
+                  {candidate.name} ↔️ {engineer.name}
+                </div>
+                <div>
+                  {timeSlot.day}, {formatTime(timeSlot.startTime)} -{" "}
+                  {formatTime(getEndTime(timeSlot.startTime, duration))}
+                </div>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -76,52 +90,129 @@ export function ConfirmationModal({
 
   return (
     <Dialog open={true} onOpenChange={onCancel}>
-      <DialogContent className="sm:max-w-lg animate-in slide-in-from-bottom-4 duration-300">
+      <DialogContent className="sm:max-w-2xl animate-in slide-in-from-bottom-4 duration-300">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">Confirm Interview</DialogTitle>
+          <DialogTitle className="text-2xl font-semibold">Confirm Interview Booking</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
-          <div className="grid grid-cols-1 gap-4">
-            <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg">
-              <User className="w-5 h-5 text-blue-600" />
-              <div>
-                <div className="font-medium text-gray-900">Candidate</div>
-                <div className="text-gray-600">{candidate.name}</div>
+        <div className="space-y-6 py-6">
+          {/* Participants */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-start gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+                <User className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <div className="font-semibold text-gray-900">Candidate</div>
+                <div className="text-lg font-medium text-blue-700">{candidate.name}</div>
+                <div className="text-sm text-gray-600 mt-1">Interview Candidate</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg">
-              <Users className="w-5 h-5 text-green-600" />
-              <div>
-                <div className="font-medium text-gray-900">Interviewer</div>
-                <div className="text-gray-600">{engineer.name}</div>
-                <div className="text-sm text-gray-500">{engineer.role}</div>
+            <div className="flex items-start gap-4 p-4 bg-green-50 rounded-lg border border-green-200">
+              <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <div className="font-semibold text-gray-900">Interviewer</div>
+                <div className="text-lg font-medium text-green-700">{engineer.name}</div>
+                <div className="text-sm text-gray-600 mt-1">{engineer.role}</div>
               </div>
             </div>
+          </div>
 
-            <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg">
-              <Calendar className="w-5 h-5 text-purple-600" />
-              <div>
-                <div className="font-medium text-gray-900">Date & Time</div>
-                <div className="text-gray-600">
-                  {timeSlot.day}, {formatTime(timeSlot.startTime)} -{" "}
-                  {formatTime(getEndTime(timeSlot.startTime, duration))}
+          {/* Interview Details */}
+          <div className="bg-gray-50 rounded-lg p-6 space-y-4">
+            <h4 className="font-semibold text-gray-900 text-lg">Interview Details</h4>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3">
+                <Calendar className="w-5 h-5 text-purple-600" />
+                <div>
+                  <div className="font-medium text-gray-900">Date & Time</div>
+                  <div className="text-gray-600">
+                    {timeSlot.day}, {formatTime(timeSlot.startTime)} -{" "}
+                    {formatTime(getEndTime(timeSlot.startTime, duration))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Clock className="w-5 h-5 text-orange-600" />
+                <div>
+                  <div className="font-medium text-gray-900">Duration</div>
+                  <div className="text-gray-600">{duration} minutes</div>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-orange-50 rounded-lg">
-              <Clock className="w-5 h-5 text-orange-600" />
-              <div>
-                <div className="font-medium text-gray-900">Duration</div>
-                <div className="text-gray-600">{duration} minutes</div>
+            {/* Interview Type Selection */}
+            <div>
+              <div className="font-medium text-gray-900 mb-3">Interview Format</div>
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  onClick={() => setInterviewType("video")}
+                  className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${
+                    interviewType === "video"
+                      ? "border-blue-500 bg-blue-50 text-blue-700"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  <Video className="w-4 h-4" />
+                  <span className="text-sm font-medium">Video Call</span>
+                </button>
+                <button
+                  onClick={() => setInterviewType("phone")}
+                  className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${
+                    interviewType === "phone"
+                      ? "border-blue-500 bg-blue-50 text-blue-700"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  <Phone className="w-4 h-4" />
+                  <span className="text-sm font-medium">Phone</span>
+                </button>
+                <button
+                  onClick={() => setInterviewType("in-person")}
+                  className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${
+                    interviewType === "in-person"
+                      ? "border-blue-500 bg-blue-50 text-blue-700"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  <MapPin className="w-4 h-4" />
+                  <span className="text-sm font-medium">In Person</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Information */}
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center mt-0.5">
+                <span className="text-white text-xs font-bold">!</span>
+              </div>
+              <div className="text-sm text-amber-800">
+                <div className="font-medium mb-1">What happens next?</div>
+                <ul className="space-y-1 text-amber-700">
+                  <li>• Calendar invites will be sent to both participants</li>
+                  <li>
+                    •{" "}
+                    {interviewType === "video"
+                      ? "Video call link will be included"
+                      : interviewType === "phone"
+                        ? "Phone details will be shared"
+                        : "Location details will be provided"}
+                  </li>
+                  <li>• Reminder notifications will be sent 24 hours and 1 hour before</li>
+                </ul>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex gap-3 pt-4">
+        <div className="flex gap-3 pt-4 border-t">
           <Button variant="outline" onClick={onCancel} className="flex-1" disabled={isConfirming}>
             Cancel
           </Button>
@@ -129,10 +220,10 @@ export function ConfirmationModal({
             {isConfirming ? (
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Confirming...
+                Scheduling Interview...
               </div>
             ) : (
-              "Confirm Interview"
+              "Confirm & Schedule Interview"
             )}
           </Button>
         </div>
