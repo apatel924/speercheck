@@ -3,13 +3,12 @@
 import { Button } from "@/components/ui/button"
 
 interface DurationSelectorProps {
-  duration: 15 | 30 | 60
-  onDurationChange: (duration: 15 | 30 | 60) => void
+  duration: 30 | 60
+  onDurationChange: (duration: 30 | 60) => void
 }
 
 export function DurationSelector({ duration, onDurationChange }: DurationSelectorProps) {
-  const durations: Array<{ value: 15 | 30 | 60; label: string }> = [
-    { value: 15, label: "15 min" },
+  const durations: Array<{ value: 30 | 60; label: string }> = [
     { value: 30, label: "30 min" },
     { value: 60, label: "60 min" },
   ]
