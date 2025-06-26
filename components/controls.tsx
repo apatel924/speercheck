@@ -4,12 +4,12 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import type { ViewSettings } from "@/lib/types"
 
-interface EnhancedControlsProps {
+interface ControlsProps {
   viewSettings: ViewSettings
   onViewSettingsChange: (settings: ViewSettings) => void
 }
 
-export function EnhancedControls({ viewSettings, onViewSettingsChange }: EnhancedControlsProps) {
+export function Controls({ viewSettings, onViewSettingsChange }: ControlsProps) {
   return (
     <div className="space-y-4">
       {/* Show Booked Only Toggle */}
