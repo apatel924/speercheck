@@ -5,7 +5,7 @@ import { ChevronDown, Search, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { getEngineerInitials, generateEmail, getCandidateColor } from "@/lib/utils"
+// Removed getCandidateColor and generateEmail imports
 import type { Candidate } from "@/lib/types"
 
 interface CandidateSelectorProps {
@@ -55,10 +55,8 @@ export function CandidateSelector({ candidates, selectedCandidate, onSelect }: C
         </div>
 
         <div className="max-h-80 overflow-y-auto p-2">
-          {filteredCandidates.map((candidate, index) => {
-            const initials = getEngineerInitials(candidate.name)
+          {filteredCandidates.map((candidate) => {
             const isSelected = selectedCandidate?.id === candidate.id
-            const email = generateEmail(candidate.name)
 
             return (
               <div
@@ -75,13 +73,13 @@ export function CandidateSelector({ candidates, selectedCandidate, onSelect }: C
                 }}
               >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${getCandidateColor(index)}`}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${candidate.color}`}
                 >
-                  {initials}
+                  {candidate.name.split(" ").map(n => n[0]).join("").slice(0,2)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-gray-900 dark:text-gray-100 truncate">{candidate.name}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400 truncate">{email}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400 truncate">{candidate.email}</div>
                 </div>
               </div>
             )
