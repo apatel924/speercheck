@@ -4,6 +4,8 @@ export const mockCandidates: Candidate[] = [
   {
     id: "1",
     name: "Alice Johnson",
+    email: "alice.johnson@email.com",
+    color: "bg-blue-500",
     availability: {
       Monday: [
         { start: "09:00", end: "11:00" },
@@ -30,6 +32,8 @@ export const mockCandidates: Candidate[] = [
   {
     id: "2",
     name: "Bob Smith",
+    email: "bob.smith@email.com",
+    color: "bg-blue-600",
     availability: {
       Monday: [
         { start: "10:00", end: "12:00" },
@@ -56,6 +60,8 @@ export const mockCandidates: Candidate[] = [
   {
     id: "3",
     name: "Carol Davis",
+    email: "carol.davis@email.com",
+    color: "bg-blue-700",
     availability: {
       Monday: [
         { start: "09:30", end: "11:30" },
@@ -85,7 +91,9 @@ export const mockEngineers: Engineer[] = [
   {
     id: "e1",
     name: "David Wilson",
+    email: "david.wilson@company.com",
     role: "Senior Frontend Engineer",
+    color: "bg-red-500",
     availability: {
       Monday: [
         { start: "09:00", end: "12:00" },
@@ -112,7 +120,9 @@ export const mockEngineers: Engineer[] = [
   {
     id: "e2",
     name: "Emma Brown",
+    email: "emma.brown@company.com",
     role: "Backend Engineer",
+    color: "bg-blue-500",
     availability: {
       Monday: [
         { start: "10:00", end: "13:00" },
@@ -139,7 +149,9 @@ export const mockEngineers: Engineer[] = [
   {
     id: "e3",
     name: "Frank Miller",
+    email: "frank.miller@company.com",
     role: "Full Stack Engineer",
+    color: "bg-green-500",
     availability: {
       Monday: [
         { start: "09:30", end: "12:30" },
@@ -166,7 +178,9 @@ export const mockEngineers: Engineer[] = [
   {
     id: "e4",
     name: "Grace Lee",
+    email: "grace.lee@company.com",
     role: "DevOps Engineer",
+    color: "bg-purple-500",
     availability: {
       Monday: [
         { start: "11:00", end: "14:00" },
