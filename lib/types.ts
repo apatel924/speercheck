@@ -1,3 +1,5 @@
+export type DayOfWeek = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday"
+
 export interface TimeSlot {
   day: string
   startTime: string
@@ -11,18 +13,18 @@ export interface AvailabilitySlot {
 export interface Candidate {
   id: string
   name: string
-  availability: {
-    [day: string]: AvailabilitySlot[]
-  }
+  email: string
+  color: string
+  availability: Record<DayOfWeek, AvailabilitySlot[]>
 }
 
 export interface Engineer {
   id: string
   name: string
+  email: string
   role: string
-  availability: {
-    [day: string]: AvailabilitySlot[]
-  }
+  color: string
+  availability: Record<DayOfWeek, AvailabilitySlot[]>
 }
 
 export interface BookedSlot {
