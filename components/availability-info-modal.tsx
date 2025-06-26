@@ -8,8 +8,8 @@ import type { Candidate, Engineer } from "@/lib/types"
 interface AvailabilityInfoModalProps {
   open: boolean
   onClose: () => void
-  candidate?: Candidate
-  engineers?: Engineer[]
+  candidate?: Candidate | null
+  engineers?: Engineer[] | null
   type: "candidate" | "engineers"
 }
 
