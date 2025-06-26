@@ -4,8 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Calendar, Clock, User, Users, Check } from "lucide-react"
-import { formatTime, getEndTime } from "@/lib/utils"
-import type { Candidate, Engineer, TimeSlot } from "@/lib/utils"
+import type { Candidate, Engineer, TimeSlot } from "@/lib/types"
 
 interface ConfirmationModalProps {
   candidate: Candidate
@@ -27,10 +26,31 @@ export function ConfirmationModal({
   const [isConfirming, setIsConfirming] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
 
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(":")
+    const hour = Number.parseInt(hours)
+    const ampm = hour >= 12 ? "PM" : "AM"
+    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
+    return `${displayHour}:${minutes} ${ampm}`
+  }
+
+  const getEndTime = (startTime: string, duration: number) => {
+    const [hours, minutes] = startTime.split(":").map(Number)
+    const totalMinutes = hours * 60 + minutes + duration
+    const endHours = Math.floor(totalMinutes / 60)
+    const endMins = totalMinutes % 60
+    return `${endHours.toString().padStart(2, "0")}:${endMins.toString().padStart(2, "0")}`
+  }
+
   const handleConfirm = async () => {
     setIsConfirming(true)
+
+    // Simulate API call delay
     await new Promise((resolve) => setTimeout(resolve, 500))
+
     setShowSuccess(true)
+
+    // Show success animation for 1.5 seconds
     setTimeout(() => {
       onConfirm()
       setIsConfirming(false)
