@@ -14,17 +14,17 @@ export function DurationSelector({ duration, onDurationChange }: DurationSelecto
   ]
 
   return (
-    <div className="flex bg-gray-100 rounded-lg p-1">
+    <div className="flex bg-gray-100 dark:bg-gray-700 rounded-full p-1">
       {durations.map((d) => (
         <Button
           key={d.value}
           variant={duration === d.value ? "default" : "ghost"}
           size="sm"
           onClick={() => onDurationChange(d.value)}
-          className={`flex-1 rounded-md text-sm transition-all duration-200 ${
+          className={`flex-1 rounded-full text-sm transition-all duration-200 ${
             duration === d.value
               ? "bg-blue-600 text-white shadow-sm hover:bg-blue-700"
-              : "text-gray-600 hover:bg-gray-200 bg-transparent"
+              : "text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 bg-transparent"
           }`}
         >
           {d.label}
