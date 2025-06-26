@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Calendar, Clock, User, Users, Check, MapPin, Video, Phone } from "lucide-react"
 import type { Candidate, Engineer, TimeSlot } from "@/lib/types"
+import { formatTime, getEndTime } from "@/lib/utils"
 
 interface ConfirmationModalProps {
   candidate: Candidate
@@ -27,31 +28,10 @@ export function ConfirmationModal({
   const [showSuccess, setShowSuccess] = useState(false)
   const [interviewType, setInterviewType] = useState<"video" | "phone" | "in-person">("video")
 
-  const formatTime = (time: string) => {
-    const [hours, minutes] = time.split(":")
-    const hour = Number.parseInt(hours)
-    const ampm = hour >= 12 ? "PM" : "AM"
-    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
-    return `${displayHour}:${minutes} ${ampm}`
-  }
-
-  const getEndTime = (startTime: string, duration: number) => {
-    const [hours, minutes] = startTime.split(":").map(Number)
-    const totalMinutes = hours * 60 + minutes + duration
-    const endHours = Math.floor(totalMinutes / 60)
-    const endMins = totalMinutes % 60
-    return `${endHours.toString().padStart(2, "0")}:${endMins.toString().padStart(2, "0")}`
-  }
-
   const handleConfirm = async () => {
     setIsConfirming(true)
-
-    // Simulate API call delay
     await new Promise((resolve) => setTimeout(resolve, 800))
-
     setShowSuccess(true)
-
-    // Show success animation for 2 seconds
     setTimeout(() => {
       onConfirm()
       setIsConfirming(false)
@@ -96,7 +76,6 @@ export function ConfirmationModal({
         </DialogHeader>
 
         <div className="space-y-6 py-6">
-          {/* Participants */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-start gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
               <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
@@ -121,7 +100,6 @@ export function ConfirmationModal({
             </div>
           </div>
 
-          {/* Interview Details */}
           <div className="bg-gray-50 rounded-lg p-6 space-y-4">
             <h4 className="font-semibold text-gray-900 text-lg">Interview Details</h4>
 
@@ -146,48 +124,31 @@ export function ConfirmationModal({
               </div>
             </div>
 
-            {/* Interview Type Selection */}
             <div>
               <div className="font-medium text-gray-900 mb-3">Interview Format</div>
               <div className="grid grid-cols-3 gap-3">
-                <button
-                  onClick={() => setInterviewType("video")}
-                  className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${
-                    interviewType === "video"
-                      ? "border-blue-500 bg-blue-50 text-blue-700"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  <Video className="w-4 h-4" />
-                  <span className="text-sm font-medium">Video Call</span>
-                </button>
-                <button
-                  onClick={() => setInterviewType("phone")}
-                  className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${
-                    interviewType === "phone"
-                      ? "border-blue-500 bg-blue-50 text-blue-700"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  <Phone className="w-4 h-4" />
-                  <span className="text-sm font-medium">Phone</span>
-                </button>
-                <button
-                  onClick={() => setInterviewType("in-person")}
-                  className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${
-                    interviewType === "in-person"
-                      ? "border-blue-500 bg-blue-50 text-blue-700"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  <MapPin className="w-4 h-4" />
-                  <span className="text-sm font-medium">In Person</span>
-                </button>
+                {[
+                  { type: "video" as const, icon: Video, label: "Video Call" },
+                  { type: "phone" as const, icon: Phone, label: "Phone" },
+                  { type: "in-person" as const, icon: MapPin, label: "In Person" },
+                ].map(({ type, icon: Icon, label }) => (
+                  <button
+                    key={type}
+                    onClick={() => setInterviewType(type)}
+                    className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${
+                      interviewType === type
+                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span className="text-sm font-medium">{label}</span>
+                  </button>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Additional Information */}
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
             <div className="flex items-start gap-3">
               <div className="w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center mt-0.5">
