@@ -149,7 +149,7 @@ export function EngineerFilter({ engineers, selectedEngineers, onSelectionChange
         </PopoverContent>
       </Popover>
 
-      {/* Filter Pills */}
+      {/* Filter */}
       {selectedEngineers.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {selectedEngineers.map((engineer) => (
