@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
-import { getEngineerColor, getEngineerInitials } from "@/lib/engineer-colors"
+import { getEngineerColor, getEngineerInitials, generateEmail } from "@/lib/utils"
 import type { Engineer } from "@/lib/types"
 
 interface EngineerFilterProps {
@@ -40,13 +40,6 @@ export function EngineerFilter({ engineers, selectedEngineers, onSelectionChange
     onSelectionChange([])
   }
 
-  // Generate mock email addresses for engineers
-  const getEngineerEmail = (engineer: Engineer) => {
-    const firstName = engineer.name.split(" ")[0].toLowerCase()
-    const lastName = engineer.name.split(" ")[1]?.toLowerCase() || ""
-    return `${firstName}.${lastName}@company.com`
-  }
-
   return (
     <div className="space-y-3">
       <Popover open={open} onOpenChange={setOpen}>
@@ -54,7 +47,6 @@ export function EngineerFilter({ engineers, selectedEngineers, onSelectionChange
           <Button
             variant="outline"
             className="w-full justify-between bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border-2 border-purple-300 dark:border-purple-600 rounded-full h-12 px-4"
-            onClick={() => setOpen(!open)}
           >
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
@@ -76,7 +68,6 @@ export function EngineerFilter({ engineers, selectedEngineers, onSelectionChange
         </PopoverTrigger>
 
         <PopoverContent className="w-96 p-0 shadow-lg border-gray-200 dark:border-gray-700 rounded-xl" align="start">
-          {/* Header */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-gray-900 dark:text-gray-100">Filter Engineers</h3>
@@ -100,12 +91,11 @@ export function EngineerFilter({ engineers, selectedEngineers, onSelectionChange
             </div>
           </div>
 
-          {/* Engineer List */}
           <div className="max-h-80 overflow-y-auto p-2">
             {filteredEngineers.map((engineer) => {
               const isSelected = selectedEngineers.some((e) => e.id === engineer.id)
               const initials = getEngineerInitials(engineer.name)
-              const email = getEngineerEmail(engineer)
+              const email = generateEmail(engineer.name, "company.com")
 
               return (
                 <div
@@ -117,18 +107,16 @@ export function EngineerFilter({ engineers, selectedEngineers, onSelectionChange
                   }`}
                   onClick={() => toggleEngineer(engineer)}
                 >
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => {}}
-                      className={`w-4 h-4 rounded border-2 focus:ring-2 focus:ring-purple-500 ${
-                        isSelected
-                          ? "bg-purple-600 border-purple-600 text-white"
-                          : "bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
-                      }`}
-                    />
-                  </div>
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => {}}
+                    className={`w-4 h-4 rounded border-2 focus:ring-2 focus:ring-purple-500 ${
+                      isSelected
+                        ? "bg-purple-600 border-purple-600 text-white"
+                        : "bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
+                    }`}
+                  />
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${getEngineerColor(engineer.id)}`}
                   >
@@ -149,7 +137,6 @@ export function EngineerFilter({ engineers, selectedEngineers, onSelectionChange
         </PopoverContent>
       </Popover>
 
-      {/* Filter */}
       {selectedEngineers.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {selectedEngineers.map((engineer) => (
