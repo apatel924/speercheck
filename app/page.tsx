@@ -46,24 +46,15 @@ export default function SchedulerPage() {
   const handleSlotClick = (timeSlot: TimeSlot, engineer: Engineer) => {
     if (!selectedCandidate) return
 
-    // Check if the requested slot can accommodate the full duration
     const canBook = canBookSlot(selectedCandidate, engineer, timeSlot.day, timeSlot.startTime, duration, bookedSlots)
 
     if (canBook) {
-      // Direct booking if slot is fully available
-      setConfirmationData({
-        candidate: selectedCandidate,
-        engineer,
-        timeSlot,
-        duration,
-      })
+      setConfirmationData({ candidate: selectedCandidate, engineer, timeSlot, duration })
     } else {
-      // Try to find an alternative slot 30 minutes earlier
       const [hours, minutes] = timeSlot.startTime.split(":").map(Number)
       const earlierMinutes = hours * 60 + minutes - 30
 
       if (earlierMinutes >= 9 * 60) {
-        // Don't go before 9:00 AM
         const earlierHours = Math.floor(earlierMinutes / 60)
         const earlierMins = earlierMinutes % 60
         const suggestedTime = `${earlierHours.toString().padStart(2, "0")}:${earlierMins.toString().padStart(2, "0")}`
@@ -89,13 +80,10 @@ export default function SchedulerPage() {
           return
         }
       }
-
-      // If no alternative found, show error (you could add an error modal here)
       alert("This time slot is not available for the selected duration. Please try a different time.")
     }
   }
 
-  // Update the handleConfirmBooking function to include interview type
   const handleConfirmBooking = () => {
     if (!confirmationData) return
 
@@ -103,7 +91,6 @@ export default function SchedulerPage() {
     const startMinutes = confirmationData.timeSlot.startTime.split(":").map(Number)
     const totalMinutes = startMinutes[0] * 60 + startMinutes[1]
 
-    // Create bookings for each 30-minute slot required for the duration
     for (let i = 0; i < confirmationData.duration; i += 30) {
       const slotMinutes = totalMinutes + i
       const slotHours = Math.floor(slotMinutes / 60)
@@ -116,7 +103,7 @@ export default function SchedulerPage() {
         engineerId: confirmationData.engineer.id,
         day: confirmationData.timeSlot.day,
         startTime: slotTime,
-        duration: confirmationData.duration, // Keep the full duration for each slot
+        duration: confirmationData.duration,
         bookedAt: new Date(),
         status: "confirmed",
         interviewType: "video",
@@ -139,24 +126,8 @@ export default function SchedulerPage() {
     })
     setValidationData(null)
   }
-
-  const handleViewBookingDetails = (booking: BookedSlot) => {
-    // Show booking details modal
-    console.log("View booking details:", booking)
-  }
-
-  const handleCancelBooking = (bookingId: string) => {
-    setBookedSlots((prev) => prev.filter((booking) => booking.id !== bookingId))
-  }
-
-  const handleRescheduleBooking = (bookingId: string) => {
-    // Handle rescheduling logic
-    console.log("Reschedule booking:", bookingId)
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
@@ -175,9 +146,7 @@ export default function SchedulerPage() {
           </div>
         </div>
       </header>
-
       <div className="flex h-[calc(100vh-80px)]">
-        {/* Main Calendar Area */}
         <div className="flex-1 p-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-full">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -191,15 +160,16 @@ export default function SchedulerPage() {
                 bookedSlots={bookedSlots}
                 viewSettings={viewSettings}
                 onSlotClick={handleSlotClick}
-                onViewBookingDetails={handleViewBookingDetails}
-                onCancelBooking={handleCancelBooking}
-                onRescheduleBooking={handleRescheduleBooking}
+                onViewBookingDetails={(booking) => console.log("View booking details:", booking)}
+                onCancelBooking={(bookingId) =>
+                  setBookedSlots((prev) => prev.filter((booking) => booking.id !== bookingId))
+                }
+                onRescheduleBooking={(bookingId) => console.log("Reschedule booking:", bookingId)}
               />
             </div>
           </div>
         </div>
 
-        {/* Right Sidebar */}
         <div className="w-80 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 p-6 overflow-y-auto">
           <div className="space-y-6">
             <div>
@@ -287,7 +257,6 @@ export default function SchedulerPage() {
         </div>
       </div>
 
-      {/* Modals */}
       {confirmationData && (
         <ConfirmationModal
           candidate={confirmationData.candidate}
