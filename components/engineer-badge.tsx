@@ -2,17 +2,16 @@
 
 import { useState } from "react"
 import { Lock } from "lucide-react"
-import { getEngineerInitials } from "@/lib/engineer-colors"
+import { getEngineerInitials, getEndTime } from "@/lib/utils"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
-import type { Engineer, BookedSlot, Candidate } from "@/lib/types"
 import { mockCandidates } from "@/lib/mock-data"
+import type { Engineer, BookedSlot } from "@/lib/types"
 
 interface EngineerBadgeProps {
   engineer: Engineer
   color: string
   status: "available" | "selected" | "booked"
   bookingDetails?: BookedSlot
-  candidate?: Candidate
   onViewDetails?: () => void
   onCancelBooking?: () => void
   onReschedule?: () => void
@@ -23,7 +22,6 @@ export function EngineerBadge({
   color,
   status,
   bookingDetails,
-  candidate,
   onViewDetails,
   onCancelBooking,
   onReschedule,
@@ -46,14 +44,6 @@ export function EngineerBadge({
           default:
             return "📹 Video Call"
         }
-      }
-
-      const getEndTime = (startTime: string, duration: number) => {
-        const [hours, minutes] = startTime.split(":").map(Number)
-        const totalMinutes = hours * 60 + minutes + duration
-        const endHours = Math.floor(totalMinutes / 60)
-        const endMins = totalMinutes % 60
-        return `${endHours.toString().padStart(2, "0")}:${endMins.toString().padStart(2, "0")}`
       }
 
       return (
