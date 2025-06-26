@@ -203,7 +203,7 @@ export function WeeklyCalendar({
                 <div className="flex flex-wrap gap-1 items-start justify-start">
                   {engineerStates.map(
                     ({ engineer, status, bookingDetails }: { engineer: Engineer; status: "booked" | "available"; bookingDetails?: BookedSlot }) => (
-                      <EngineerBadge
+                        <EngineerBadge
                         key={engineer.id}
                         engineer={engineer}
                         color={getEngineerColor(engineer.id)}
@@ -214,8 +214,7 @@ export function WeeklyCalendar({
                         onCancelBooking={() => bookingDetails && onCancelBooking(bookingDetails.id)}
                         onReschedule={() => bookingDetails && onRescheduleBooking(bookingDetails.id)}
                       />
-                    )
-                  )}
+                    ))}
                 </div>
               </div>
             )
