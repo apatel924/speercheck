@@ -1,56 +1,23 @@
-import type { Candidate, Engineer, BookedSlot, AvailabilitySlot } from "./types"
+import type { Candidate, Engineer, BookedSlot } from "./types"
+import { timeToMinutes, minutesToTime, generateTimeSlots } from "./utils"
 
-// Convert time string to minutes since midnight
-function timeToMinutes(time: string): number {
-  const [hours, minutes] = time.split(":").map(Number)
-  return hours * 60 + minutes
-}
-
-// Convert minutes since midnight to time string
-function minutesToTime(minutes: number): string {
-  const hours = Math.floor(minutes / 60)
-  const mins = minutes % 60
-  return `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}`
-}
-
-// Generate 30-minute time slots from availability ranges
-function generateTimeSlots(availability: AvailabilitySlot[]): string[] {
-  const slots: string[] = []
-
-  for (const range of availability) {
-    const startMinutes = timeToMinutes(range.start)
-    const endMinutes = timeToMinutes(range.end)
-
-    for (let minutes = startMinutes; minutes < endMinutes; minutes += 30) {
-      slots.push(minutesToTime(minutes))
-    }
-  }
-
-  return slots
-}
-
-// Find overlapping availability between candidate and engineers
-export function getAvailableSlots(candidate: Candidate, engineers: Engineer[]): Map<string, Engineer[]> {
+export function getAvailableSlots(candidate: Candidate, engineers: Engineer[]) {
   const availableSlots = new Map<string, Engineer[]>()
-
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 
   for (const day of days) {
     const candidateSlots = generateTimeSlots(candidate.availability[day] || [])
 
     for (const slot of candidateSlots) {
-      const availableEngineers: Engineer[] = []
+      const freeEngineers: Engineer[] = []
 
       for (const engineer of engineers) {
         const engineerSlots = generateTimeSlots(engineer.availability[day] || [])
-        if (engineerSlots.includes(slot)) {
-          availableEngineers.push(engineer)
-        }
+        if (engineerSlots.includes(slot)) freeEngineers.push(engineer)
       }
 
-      if (availableEngineers.length > 0) {
-        const slotKey = `${day}-${slot}`
-        availableSlots.set(slotKey, availableEngineers)
+      if (freeEngineers.length) {
+        availableSlots.set(`${day}-${slot}`, freeEngineers)
       }
     }
   }
@@ -58,121 +25,100 @@ export function getAvailableSlots(candidate: Candidate, engineers: Engineer[]): 
   return availableSlots
 }
 
-// Get all bookings for a specific slot
-export function getSlotBookings(bookedSlots: BookedSlot[], day: string, startTime: string): BookedSlot[] {
-  return bookedSlots.filter(
-    (booking) => booking.day === day && booking.startTime === startTime && booking.status === "confirmed",
-  )
+
+//Booking-related utils                          
+export function getAllSlotBookings(bookings: BookedSlot[], day: string, startTime: string) {
+  return bookings.filter((b) => b.day === day && b.startTime === startTime && b.status === "confirmed")
 }
 
-// Return all bookings for a given day and time
-export function getAllSlotBookings(bookedSlots: BookedSlot[], day: string, time: string): BookedSlot[] {
-  return bookedSlots.filter(
-    (booking) => booking.day === day && booking.startTime === time && booking.status !== "cancelled"
-  )
-}
-
-// Return all engineers who are booked for a given day and time
 export function getBookedEngineersInSlot(
-  bookedSlots: BookedSlot[],
+  bookings: BookedSlot[],
   engineers: Engineer[],
   day: string,
-  time: string
-): Engineer[] {
-  const bookedEngineerIds = bookedSlots
-    .filter((booking) => booking.day === day && booking.startTime === time && booking.status !== "cancelled")
-    .map((booking) => booking.engineerId)
-  return engineers.filter((engineer) => bookedEngineerIds.includes(engineer.id))
+  startTime: string,
+) {
+  return getAllSlotBookings(bookings, day, startTime)
+    .map((b) => engineers.find((e) => e.id === b.engineerId))
+    .filter(Boolean) as Engineer[]
 }
 
-// Check if a specific engineer is booked in a slot
+//conflict-detection 
+
 export function isEngineerBookedInRange(
-  bookedSlots: BookedSlot[],
+  bookings: BookedSlot[],
   engineerId: string,
   day: string,
   startTime: string,
   duration: number,
-): boolean {
-  const startMinutes = timeToMinutes(startTime)
-  const endMinutes = startMinutes + duration
+) {
+  const start = timeToMinutes(startTime)
+  const end = start + duration
 
-  return bookedSlots.some((booking) => {
-    if (booking.engineerId !== engineerId || booking.day !== day || booking.status !== "confirmed") {
-      return false
-    }
+  return bookings.some((b) => {
+    if (b.engineerId !== engineerId || b.day !== day || b.status !== "confirmed") return false
 
-    const bookingStartMinutes = timeToMinutes(booking.startTime)
-    const bookingEndMinutes = bookingStartMinutes + booking.duration
+    const bookingStart = timeToMinutes(b.startTime)
+    const bookingEnd = bookingStart + b.duration
 
-    // Check for any overlap
     return (
-      (startMinutes >= bookingStartMinutes && startMinutes < bookingEndMinutes) ||
-      (endMinutes > bookingStartMinutes && endMinutes <= bookingEndMinutes) ||
-      (startMinutes <= bookingStartMinutes && endMinutes >= bookingEndMinutes)
+      (start >= bookingStart && start < bookingEnd) ||
+      (end > bookingStart && end <= bookingEnd) ||
+      (start <= bookingStart && end >= bookingEnd)
     )
   })
 }
 
-// Check if a candidate is already booked in overlapping time slots
 export function isCandidateBooked(
-  bookedSlots: BookedSlot[],
+  bookings: BookedSlot[],
   candidateId: string,
   day: string,
   startTime: string,
   duration: number,
-): boolean {
-  const startMinutes = timeToMinutes(startTime)
-  const endMinutes = startMinutes + duration
+) {
+  const start = timeToMinutes(startTime)
+  const end = start + duration
 
-  return bookedSlots.some((booking) => {
-    if (booking.candidateId !== candidateId || booking.day !== day || booking.status !== "confirmed") {
-      return false
-    }
+  return bookings.some((b) => {
+    if (b.candidateId !== candidateId || b.day !== day || b.status !== "confirmed") return false
 
-    const bookingStartMinutes = timeToMinutes(booking.startTime)
-    const bookingEndMinutes = bookingStartMinutes + booking.duration
+    const bookingStart = timeToMinutes(b.startTime)
+    const bookingEnd = bookingStart + b.duration
 
-    // Check for any overlap
     return (
-      (startMinutes >= bookingStartMinutes && startMinutes < bookingEndMinutes) ||
-      (endMinutes > bookingStartMinutes && endMinutes <= bookingEndMinutes) ||
-      (startMinutes <= bookingStartMinutes && endMinutes >= bookingEndMinutes)
+      (start >= bookingStart && start < bookingEnd) ||
+      (end > bookingStart && end <= bookingEnd) ||
+      (start <= bookingStart && end >= bookingEnd)
     )
   })
 }
 
-// Check if a slot can be booked for a specific engineer-candidate pair
+//slot checker
+
 export function canBookSlot(
   candidate: Candidate,
   engineer: Engineer,
   day: string,
   startTime: string,
   duration: number,
-  bookedSlots: BookedSlot[],
-): boolean {
-  // Check if this specific engineer is already booked in the time range
-  if (isEngineerBookedInRange(bookedSlots, engineer.id, day, startTime, duration)) {
+  bookings: BookedSlot[],
+) {
+  /* existing bookings conflict? */
+  if (
+    isEngineerBookedInRange(bookings, engineer.id, day, startTime, duration) ||
+    isCandidateBooked(bookings, candidate.id, day, startTime, duration)
+  )
     return false
-  }
 
-  // Check if the candidate is already booked in overlapping time slots
-  if (isCandidateBooked(bookedSlots, candidate.id, day, startTime, duration)) {
-    return false
-  }
+  /* both parties actually free? */
+  const start = timeToMinutes(startTime)
+  const end = start + duration
 
-  const startMinutes = timeToMinutes(startTime)
-  const endMinutes = startMinutes + duration
-
-  // Check candidate and engineer availability for the full duration
   const candidateSlots = generateTimeSlots(candidate.availability[day] || [])
   const engineerSlots = generateTimeSlots(engineer.availability[day] || [])
 
-  // Check if all required 30-minute slots are available
-  for (let minutes = startMinutes; minutes < endMinutes; minutes += 30) {
-    const timeSlot = minutesToTime(minutes)
-    if (!candidateSlots.includes(timeSlot) || !engineerSlots.includes(timeSlot)) {
-      return false
-    }
+  for (let t = start; t < end; t += 30) {
+    const slot = minutesToTime(t)
+    if (!candidateSlots.includes(slot) || !engineerSlots.includes(slot)) return false
   }
 
   return true
