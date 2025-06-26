@@ -21,20 +21,6 @@ export function CandidateSelector({ candidates, selectedCandidate, onSelect }: C
     candidate.name.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  const formatAvailability = (availability: Candidate["availability"]) => {
-    const summary = Object.entries(availability)
-      .filter(([_, slots]) => slots.length > 0)
-      .map(([day, slots]) => {
-        const dayShort = day.slice(0, 3)
-        const timeRanges = slots.map((slot) => `${slot.start}–${slot.end}`)
-        return `${dayShort} ${timeRanges.join(", ")}`
-      })
-      .slice(0, 2)
-      .join("; ")
-
-    return summary || "No availability"
-  }
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -75,10 +61,9 @@ export function CandidateSelector({ candidates, selectedCandidate, onSelect }: C
                 setOpen(false)
                 setSearchTerm("")
               }}
-              className="w-full p-3 text-left hover:bg-gray-50 transition-colors duration-150 border-b border-gray-100 last:border-b-0"
+              className="w-full p-4 text-left hover:bg-gray-50 transition-colors duration-150 border-b border-gray-100 last:border-b-0"
             >
               <div className="font-medium text-gray-900">{candidate.name}</div>
-              <div className="text-sm text-gray-500 mt-1">Available: {formatAvailability(candidate.availability)}</div>
             </button>
           ))}
 
