@@ -4,12 +4,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Calendar, Clock } from "lucide-react"
 import type { Candidate, Engineer } from "@/lib/types"
+import { formatTime } from "@/lib/utils"
 
 interface AvailabilityInfoModalProps {
   open: boolean
   onClose: () => void
-  candidate?: Candidate | null
-  engineers?: Engineer[] | null
+  candidate?: Candidate
+  engineers?: Engineer[]
   type: "candidate" | "engineers"
 }
 
@@ -17,13 +18,6 @@ const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 
 export function AvailabilityInfoModal({ open, onClose, candidate, engineers, type }: AvailabilityInfoModalProps) {
   const formatTimeRange = (start: string, end: string) => {
-    const formatTime = (time: string) => {
-      const [hours, minutes] = time.split(":")
-      const hour = Number.parseInt(hours)
-      const ampm = hour >= 12 ? "PM" : "AM"
-      const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
-      return `${displayHour}:${minutes} ${ampm}`
-    }
     return `${formatTime(start)}–${formatTime(end)}`
   }
 
