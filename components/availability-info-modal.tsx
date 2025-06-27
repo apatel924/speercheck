@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Calendar, Clock } from "lucide-react"
 import type { Candidate, Engineer } from "@/lib/types"
+import type { DayOfWeek, AvailabilitySlot } from "@/lib/types"
 import { formatTime } from "@/lib/utils"
 
 interface AvailabilityInfoModalProps {
@@ -14,7 +15,7 @@ interface AvailabilityInfoModalProps {
   type: "candidate" | "engineers"
 }
 
-const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+const days: DayOfWeek[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 
 export function AvailabilityInfoModal({ open, onClose, candidate, engineers, type }: AvailabilityInfoModalProps) {
   const formatTimeRange = (start: string, end: string) => {
@@ -36,7 +37,7 @@ export function AvailabilityInfoModal({ open, onClose, candidate, engineers, typ
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">{candidate.name}</h3>
               <div className="space-y-3">
-                {days.map((day) => {
+                {days.map((day: DayOfWeek) => {
                   const daySlots = candidate.availability[day] || []
                   return (
                     <div key={day} className="flex items-start gap-4">
@@ -44,7 +45,7 @@ export function AvailabilityInfoModal({ open, onClose, candidate, engineers, typ
                       <div className="flex-1">
                         {daySlots.length > 0 ? (
                           <div className="flex flex-wrap gap-2">
-                            {daySlots.map((slot, index) => (
+                            {daySlots.map((slot: AvailabilitySlot, index: number) => (
                               <span
                                 key={index}
                                 className="inline-flex items-center gap-1 px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm"
@@ -79,7 +80,7 @@ export function AvailabilityInfoModal({ open, onClose, candidate, engineers, typ
                     </AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-3 pt-2">
-                        {days.map((day) => {
+                        {days.map((day: DayOfWeek) => {
                           const daySlots = engineer.availability[day] || []
                           return (
                             <div key={day} className="flex items-start gap-4">
@@ -87,7 +88,7 @@ export function AvailabilityInfoModal({ open, onClose, candidate, engineers, typ
                               <div className="flex-1">
                                 {daySlots.length > 0 ? (
                                   <div className="flex flex-wrap gap-2">
-                                    {daySlots.map((slot, index) => (
+                                    {daySlots.map((slot: AvailabilitySlot, index: number) => (
                                       <span
                                         key={index}
                                         className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm"
