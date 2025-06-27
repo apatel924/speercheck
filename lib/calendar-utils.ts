@@ -1,9 +1,9 @@
-import type { Candidate, Engineer, BookedSlot } from "./types"
+import type { Candidate, Engineer, BookedSlot, DayOfWeek } from "./types"
 import { timeToMinutes, minutesToTime, generateTimeSlots } from "./utils"
 
 export function getAvailableSlots(candidate: Candidate, engineers: Engineer[]) {
   const availableSlots = new Map<string, Engineer[]>()
-  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+  const days: DayOfWeek[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 
   for (const day of days) {
     const candidateSlots = generateTimeSlots(candidate.availability[day] || [])
@@ -113,8 +113,8 @@ export function canBookSlot(
   const start = timeToMinutes(startTime)
   const end = start + duration
 
-  const candidateSlots = generateTimeSlots(candidate.availability[day] || [])
-  const engineerSlots = generateTimeSlots(engineer.availability[day] || [])
+  const candidateSlots = generateTimeSlots(candidate.availability[day as DayOfWeek] || [])
+  const engineerSlots = generateTimeSlots(engineer.availability[day as DayOfWeek] || [])
 
   for (let t = start; t < end; t += 30) {
     const slot = minutesToTime(t)
