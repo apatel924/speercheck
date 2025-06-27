@@ -180,7 +180,7 @@ export const mockEngineers: Engineer[] = [
     name: "Grace Lee",
     email: "grace.lee@company.com",
     role: "DevOps Engineer",
-    color: "bg-purple-500",
+    color: "bg-yellow-500",
     availability: {
       Monday: [
         { start: "11:00", end: "14:00" },
