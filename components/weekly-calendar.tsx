@@ -5,7 +5,7 @@ import { EngineerBadge } from "./engineer-badge"
 import { getAvailableSlots, getAllSlotBookings, getBookedEngineersInSlot } from "@/lib/calendar-utils"
 import { getEngineerColor, formatTimeToAMPM } from "@/lib/utils"
 import { mockEngineers } from "@/lib/mock-data"
-import type { Candidate, Engineer, BookedSlot, TimeSlot, ViewSettings } from "@/lib/types"
+import type { Candidate, Engineer, BookedSlot, TimeSlot, ViewSettings, DayOfWeek } from "@/lib/types"
 
 interface WeeklyCalendarProps {
   selectedCandidate: Candidate | null
@@ -19,7 +19,7 @@ interface WeeklyCalendarProps {
   onRescheduleBooking: (bookingId: string) => void
 }
 
-const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+const days: DayOfWeek[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 const timeSlots = [
   "09:00",
   "09:30",
@@ -59,17 +59,17 @@ export function WeeklyCalendar({
     return getAvailableSlots(selectedCandidate, selectedEngineers)
   }, [selectedCandidate, selectedEngineers])
 
-  const getSlotData = (day: string, time: string) => {
+  const getSlotData = (day: DayOfWeek, time: string) => {
     const slotKey = `${day}-${time}`
     const slotBookings = getAllSlotBookings(bookedSlots, day, time)
 
     if (viewSettings.showBookedOnly) {
       const bookedEngineersInSlot = getBookedEngineersInSlot(bookedSlots, mockEngineers, day, time)
-      const engineerStates = bookedEngineersInSlot.map((engineer) => {
-        const booking = slotBookings.find((b) => b.engineerId === engineer.id)
+      const engineerStates = bookedEngineersInSlot.map((engineer: Engineer) => {
+        const booking = slotBookings.find((b: BookedSlot) => b.engineerId === engineer.id)
         return {
           engineer,
-          status: "booked" as const,
+          status: "booked" as 'booked',
           bookingDetails: booking!,
         }
       })
@@ -78,25 +78,25 @@ export function WeeklyCalendar({
     }
 
     const availableEngineers = availableSlots.get(slotKey) || []
-    const engineerStates = availableEngineers.map((engineer) => {
-      const booking = slotBookings.find((b) => b.engineerId === engineer.id)
+    const engineerStates = availableEngineers.map((engineer: Engineer) => {
+      const booking = slotBookings.find((b: BookedSlot) => b.engineerId === engineer.id)
       return {
         engineer,
-        status: booking ? ("booked" as const) : ("available" as const),
+        status: booking ? ("booked" as 'booked') : ("available" as 'available'),
         bookingDetails: booking,
       }
     })
 
     const isFullyBooked =
       availableEngineers.length > 0 &&
-      availableEngineers.every((eng) => slotBookings.some((b) => b.engineerId === eng.id))
+      availableEngineers.every((eng: Engineer) => slotBookings.some((b: BookedSlot) => b.engineerId === eng.id))
 
     return { engineerStates, isFullyBooked }
   }
 
-  const handleSlotClick = (day: string, time: string) => {
+  const handleSlotClick = (day: DayOfWeek, time: string) => {
     const { engineerStates } = getSlotData(day, time)
-    const availableEngineer = engineerStates.find((s) => s.status === "available")?.engineer
+    const availableEngineer = engineerStates.find((s: { status: 'available' | 'booked', engineer: Engineer }) => s.status === "available")?.engineer
 
     if (availableEngineer) {
       onSlotClick({ day, startTime: time }, availableEngineer)
@@ -130,7 +130,7 @@ export function WeeklyCalendar({
         <div className="p-3 border-r border-gray-200 dark:border-gray-600 font-medium text-gray-700 dark:text-gray-300 text-sm">
           Time
         </div>
-        {days.map((day, index) => (
+        {days.map((day: DayOfWeek, index: number) => (
           <div
             key={day}
             className="p-3 border-r border-gray-200 dark:border-gray-600 last:border-r-0 font-medium text-gray-700 dark:text-gray-300 text-sm text-center"
@@ -146,9 +146,9 @@ export function WeeklyCalendar({
           <div className="p-3 border-r border-gray-200 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center bg-gray-50 dark:bg-gray-700">
             {formatTimeToAMPM(time)}
           </div>
-          {days.map((day) => {
+          {days.map((day: DayOfWeek) => {
             const { engineerStates, isFullyBooked } = getSlotData(day, time)
-            const hasAvailableEngineers = engineerStates.some((s) => s.status === "available")
+            const hasAvailableEngineers = engineerStates.some((s: { status: 'available' | 'booked' }) => s.status === "available")
 
             return (
               <div
@@ -169,7 +169,7 @@ export function WeeklyCalendar({
                 )}
 
                 <div className="flex flex-wrap gap-1 items-start justify-start">
-                  {engineerStates.map(({ engineer, status, bookingDetails }) => (
+                  {engineerStates.map(({ engineer, status, bookingDetails }: { engineer: Engineer, status: 'available' | 'booked', bookingDetails: BookedSlot }) => (
                     <EngineerBadge
                       key={engineer.id}
                       engineer={engineer}
