@@ -16,6 +16,7 @@ import { mockCandidates, mockEngineers } from "@/lib/mock-data"
 import { canBookSlot } from "@/lib/calendar-utils"
 import type { Candidate, Engineer, BookedSlot, TimeSlot, ViewSettings } from "@/lib/types"
 import Image from "next/image"
+import speerCheckLogo from "../src/speer_check_logo.svg"
 
 export default function SchedulerPage() {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null)
@@ -132,7 +133,7 @@ export default function SchedulerPage() {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Image src="/logo.png" alt="SpeerCheck Logo" width={24} height={24} className="dark:invert" />
+              <Image src={speerCheckLogo} alt="SpeerCheck Logo" width={24} height={24} className="dark:invert" />
               <div>
                 <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400">SpeerCheck</h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Live Interview Scheduler</p>
