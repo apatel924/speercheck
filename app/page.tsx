@@ -133,9 +133,9 @@ export default function SchedulerPage() {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Image src={speerCheckLogo} alt="SpeerCheck Logo" width={24} height={24} className="dark:invert" />
+              <Image src={speerCheckLogo} alt="SpeerCheck Logo" width={35} height={35} className="dark:invert" />
               <div>
-                <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400">SpeerCheck</h1>
+                <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-500 to-green-400 bg-clip-text text-transparent">SpeerCheck Dashboard</h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Live Interview Scheduler</p>
               </div>
             </div>
