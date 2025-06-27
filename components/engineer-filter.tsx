@@ -46,7 +46,7 @@ export function EngineerFilter({ engineers, selectedEngineers, onSelectionChange
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="w-full justify-between bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border-2 border-purple-300 dark:border-purple-600 rounded-full h-12 px-4"
+            className="w-full justify-between bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border-2 border-purple-300 dark:border-purple-600 rounded-full h-12 px-3"
           >
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
