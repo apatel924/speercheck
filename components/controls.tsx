@@ -15,10 +15,15 @@ export function Controls({ viewSettings, onViewSettingsChange }: ControlsProps) 
       {/* Show Booked Only Toggle */}
       <div className="flex items-center justify-between">
         <div>
-          <Label htmlFor="show-booked" className="text-sm font-medium text-gray-700">
+          <Label
+            htmlFor="show-booked"
+            className="text-sm font-medium text-gray-700 dark:text-gray-100"
+          >
             Show all bookings
           </Label>
-          <p className="text-xs text-gray-500 mt-1">Display only slots with confirmed bookings</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Display only slots with confirmed bookings
+          </p>
         </div>
         <Switch
           id="show-booked"
