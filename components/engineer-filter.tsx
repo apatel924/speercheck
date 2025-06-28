@@ -67,40 +67,39 @@ export function EngineerFilter({ engineers, selectedEngineers, onSelectionChange
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-96 p-0 shadow-lg border-gray-200 dark:border-gray-700 rounded-xl" align="start">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">Filter Engineers</h3>
+        <PopoverContent className="w-72 p-0 shadow-lg border-gray-200 dark:border-gray-700 rounded-xl" align="start">
+          <div className="p-2 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">Filter Engineers</h3>
               {selectedEngineers.length > 0 && (
                 <button
                   onClick={clearAll}
-                  className="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium"
+                  className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium"
                 >
                   Clear All
                 </button>
               )}
             </div>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
               <Input
                 placeholder="Search engineers..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 border-gray-300 dark:border-gray-600 rounded-lg"
+                className="pl-8 border-gray-300 dark:border-gray-600 rounded-lg h-8 text-sm"
               />
             </div>
           </div>
 
-          <div className="max-h-80 overflow-y-auto p-2">
+          <div className="max-h-60 overflow-y-auto p-1">
             {filteredEngineers.map((engineer) => {
               const isSelected = selectedEngineers.some((e) => e.id === engineer.id)
-              // Use engineer.color and engineer.email directly, initials from name
               const initials = engineer.name.split(" ").map(n => n[0]).join("").slice(0,2)
 
               return (
                 <div
                   key={engineer.id}
-                  className={`flex items-center gap-3 p-3 m-1 rounded-lg transition-all duration-150 cursor-pointer ${
+                  className={`flex items-center gap-2 p-2 m-0.5 rounded-lg transition-all duration-150 cursor-pointer ${
                     isSelected
                       ? "bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700"
                       : "hover:bg-gray-50 dark:hover:bg-gray-700 border border-transparent"
@@ -118,20 +117,20 @@ export function EngineerFilter({ engineers, selectedEngineers, onSelectionChange
                     }`}
                   />
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${engineer.color}`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-medium ${engineer.color}`}
                   >
                     {initials}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-gray-900 dark:text-gray-100 truncate">{engineer.name}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 truncate">{engineer.email}</div>
+                    <div className="font-medium text-gray-900 dark:text-gray-100 truncate text-sm">{engineer.name}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate">{engineer.email}</div>
                   </div>
                 </div>
               )
             })}
 
             {filteredEngineers.length === 0 && (
-              <div className="p-4 text-center text-gray-500 dark:text-gray-400">No engineers found</div>
+              <div className="p-2 text-center text-gray-500 dark:text-gray-400 text-sm">No engineers found</div>
             )}
           </div>
         </PopoverContent>
