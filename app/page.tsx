@@ -19,16 +19,21 @@ import Image from "next/image"
 import speerCheckLogo from "../src/speer_check_logo.svg"
 
 export default function SchedulerPage() {
+  // State management for selected candidate, engineers, duration, and bookings
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null)
   const [selectedEngineers, setSelectedEngineers] = useState<Engineer[]>([])
   const [duration, setDuration] = useState<30 | 60>(30)
   const [bookedSlots, setBookedSlots] = useState<BookedSlot[]>([])
+  
+  // State for confirmation modal data
   const [confirmationData, setConfirmationData] = useState<{
     candidate: Candidate
     engineer: Engineer
     timeSlot: TimeSlot
     duration: number
   } | null>(null)
+  
+  // State for validation modal data (when slot is unavailable)
   const [validationData, setValidationData] = useState<{
     candidate: Candidate
     engineer: Engineer
@@ -36,6 +41,8 @@ export default function SchedulerPage() {
     suggestedSlot: TimeSlot
     duration: number
   } | null>(null)
+  
+  // State for view settings and availability modal
   const [viewSettings, setViewSettings] = useState<ViewSettings>({
     showBookedOnly: false,
   })
@@ -44,8 +51,22 @@ export default function SchedulerPage() {
     type: "candidate" | "engineers"
   }>({ open: false, type: "candidate" })
 
+  const [showSelectCandidatePrompt, setShowSelectCandidatePrompt] = useState(false)
+
+  /**
+   * PSEUDO CODE: handleSlotClick
+   * - Check if candidate is selected
+   * - Validate if the requested time slot is available for booking
+   * - If available: show confirmation modal
+   * - If not available: check if 30 minutes earlier slot is available
+   * - If earlier slot available: show validation modal with suggestion
+   * - If no alternatives: show error alert
+   */
   const handleSlotClick = (timeSlot: TimeSlot, engineer: Engineer) => {
-    if (!selectedCandidate) return
+    if (!selectedCandidate) {
+      setShowSelectCandidatePrompt(true)
+      return
+    }
 
     const canBook = canBookSlot(selectedCandidate, engineer, timeSlot.day, timeSlot.startTime, duration, bookedSlots)
 
@@ -85,6 +106,13 @@ export default function SchedulerPage() {
     }
   }
 
+  /**
+   * PSEUDO CODE: handleConfirmBooking
+   * - Create multiple booking slots based on duration (30-minute increments)
+   * - Generate unique IDs for each booking slot
+   * - Add all booking slots to the bookedSlots state
+   * - Close confirmation modal
+   */
   const handleConfirmBooking = () => {
     if (!confirmationData) return
 
@@ -116,6 +144,12 @@ export default function SchedulerPage() {
     setConfirmationData(null)
   }
 
+  /**
+   * PSEUDO CODE: handleAcceptSuggestion
+   * - Transfer validation data to confirmation data with suggested time slot
+   * - Close validation modal
+   * - This will trigger the confirmation modal with the suggested time
+   */
   const handleAcceptSuggestion = () => {
     if (!validationData) return
 
@@ -129,31 +163,53 @@ export default function SchedulerPage() {
   }
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Image src={speerCheckLogo} alt="SpeerCheck Logo" width={35} height={35} className="dark:invert" />
+      <header
+        className="
+          bg-gradient-to-r from-slate-50 to-blue-100
+          dark:from-gray-900 dark:to-gray-800
+          shadow-md
+          rounded-b-2xl
+        "
+        style={{
+          boxShadow: "0 4px 24px 0 rgba(59,130,246,0.08)",
+          borderBottom: "none",
+          borderBottomLeftRadius: "1.25rem",
+          borderBottomRightRadius: "1.25rem",
+        }}
+      >
+        <div style={{ padding: "1.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              <Image src={speerCheckLogo} alt="SpeerCheck Logo" width={35} height={35} style={{ filter: "invert(0)" }} />
               <div>
-                <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-500 to-green-400 bg-clip-text text-transparent">SpeerCheck Dashboard</h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Live Interview Scheduler</p>
+                <h1 style={{ 
+                  fontSize: "3rem", 
+                  fontWeight: "bold", 
+                  background: "linear-gradient(to right, #3b82f6, #4ade80)", 
+                  WebkitBackgroundClip: "text", 
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text"
+                }}>SpeerCheck Dashboard</h1>
+                <p style={{ fontSize: "0.875rem", color: "#6b7280" }}>Live Interview Scheduler</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
               <LiveClock />
               <ThemeToggle />
             </div>
           </div>
         </div>
       </header>
-      <div className="flex h-[calc(100vh-80px)]">
-        <div className="flex-1 p-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-full">
+      <div style={{ display: "flex", height: "calc(100vh - 80px)" }}>
+        <div style={{ flex: 1, padding: "1.5rem" }}>
+          <div
+            className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 rounded-xl shadow-lg border-2 border-blue-200 dark:border-gray-700 h-full"
+          >
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Weekly Schedule</h2>
             </div>
-            <div className="p-4 h-[calc(100%-60px)] overflow-auto">
+            <div style={{ padding: "1rem", height: "calc(100% - 60px)", overflow: "auto" }}>
               <WeeklyCalendar
                 selectedCandidate={selectedCandidate}
                 selectedEngineers={selectedEngineers}
@@ -171,12 +227,29 @@ export default function SchedulerPage() {
           </div>
         </div>
 
-        <div className="w-80 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 p-6 overflow-y-auto">
-          <div className="space-y-6">
+        <div
+          className="
+            w-80
+            bg-gradient-to-br from-blue-50 to-blue-100
+            dark:from-gray-900 dark:to-gray-800
+            border-2 border-blue-200
+            dark:border-gray-700
+            rounded-xl
+            shadow-lg
+            p-6
+            overflow-y-auto
+            mt-6
+            mr-8
+            mb-6
+          "
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+              <h3
+                className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2"
+              >
                 <svg
-                  className="w-5 h-5 text-blue-600 dark:text-blue-400"
+                  style={{ width: "1.25rem", height: "1.25rem", color: "#2563eb" }}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -288,6 +361,21 @@ export default function SchedulerPage() {
         engineers={availabilityModal.type === "engineers" ? selectedEngineers : undefined}
         type={availabilityModal.type}
       />
+
+      {showSelectCandidatePrompt && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30">
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-8 max-w-sm w-full text-center">
+            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Select a Candidate</h2>
+            <p className="mb-6 text-gray-600 dark:text-gray-300">Please select a candidate before booking or interacting with a time slot.</p>
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              onClick={() => setShowSelectCandidatePrompt(false)}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
