@@ -6,7 +6,9 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "test": "react-scripts test",
+    "test:ci": "react-scripts test --watchAll=false --passWithNoTests"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -61,11 +63,18 @@
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^5.11.4",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "babel-jest": "^30.0.2",
+    "jest": "^30.0.3",
     "postcss": "^8.5",
     "tailwindcss": "^3.4.17",
+    "ts-jest": "^29.4.0",
     "typescript": "^5"
   }
 }
