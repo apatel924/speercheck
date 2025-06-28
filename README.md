@@ -92,12 +92,13 @@ Refer to [`DEMO_WALKTHROUGH.md`](./DEMO_WALKTHROUGH.md) for a full scripted reco
    npm run start
    ✅ Running Tests
    npm test
-   Test coverage includes:
 
-Candidate availability modal
-Engineers accordion view
-Modal open/close callbacks
-Conflict-resolution logic
+🧪 Test coverage includes:
+
+- Candidate availability modal
+- Engineers accordion view
+- Modal open/close callbacks
+- Conflict-resolution logic
 
 📦 Deployment
 Configured for Vercel or Netlify:
