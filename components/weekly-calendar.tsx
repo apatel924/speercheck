@@ -161,9 +161,9 @@ export function WeeklyCalendar({
                 key={`${day}-${time}`}
                 className={`p-2 border-r border-gray-200 dark:border-gray-600 last:border-r-0 h-12 relative ${
                   engineerStates.some((s: { status: 'available' | 'booked' }) => s.status === 'booked')
-                    ? 'bg-red-50 dark:bg-red-900/20'
+                    ? 'bg-gradient-to-br from-red-200 to-red-300 dark:from-red-900/40 dark:to-red-800/60'
                     : engineerStates.some((s: { status: 'available' | 'booked' }) => s.status === 'available')
-                      ? 'bg-blue-50 dark:bg-blue-900/20'
+                      ? 'bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-500/40 dark:to-blue-400/60'
                       : 'bg-white dark:bg-gray-800'
                 }`}
                 onClick={() => handleSlotClick(day, time)}
