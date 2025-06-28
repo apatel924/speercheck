@@ -53,8 +53,29 @@ export function WeeklyCalendar({
   onRescheduleBooking,
 }: WeeklyCalendarProps) {
   const availableSlots = useMemo(() => {
-    if (!selectedCandidate || selectedEngineers.length === 0) {
+    if (!selectedEngineers.length) {
       return new Map()
+    }
+    if (!selectedCandidate) {
+      // No candidate selected: show only engineers who are available at each slot
+      const map = new Map()
+      for (const day of days) {
+        for (const time of timeSlots) {
+          const available: Engineer[] = []
+          for (const engineer of selectedEngineers) {
+            // Use generateTimeSlots to get all available slots for this engineer on this day
+            // Only add engineer if this slot is in their available slots
+            const engineerSlots = require("@/lib/utils").generateTimeSlots(engineer.availability[day] || [])
+            if (engineerSlots.includes(time)) {
+              available.push(engineer)
+            }
+          }
+          if (available.length) {
+            map.set(`${day}-${time}`, available)
+          }
+        }
+      }
+      return map
     }
     return getAvailableSlots(selectedCandidate, selectedEngineers)
   }, [selectedCandidate, selectedEngineers])
@@ -103,29 +124,14 @@ export function WeeklyCalendar({
     }
   }
 
-  if (!selectedCandidate) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-center">
-          <div className="text-gray-400 dark:text-gray-500 mb-4">
-            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1}
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">Select a Candidate</h3>
-          <p className="text-gray-500 dark:text-gray-400">Choose a candidate to view their availability</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+    <div
+      className="border-2 border-blue-300 dark:border-blue-700 rounded-xl overflow-hidden bg-blue-50 dark:bg-blue-950"
+      style={{
+        boxShadow: '0 8px 32px 0 rgba(59,130,246,0.25), 0 2px 8px 0 rgba(0,0,0,0.08)',
+        background: 'linear-gradient(135deg, #f0f7ff 0%, #e0ecff 100%)',
+      }}
+    >
       <div className="grid grid-cols-6 bg-gray-50 dark:bg-gray-700">
         <div className="p-3 border-r border-gray-200 dark:border-gray-600 font-medium text-gray-700 dark:text-gray-300 text-sm">
           Time
@@ -147,27 +153,21 @@ export function WeeklyCalendar({
             {formatTimeToAMPM(time)}
           </div>
           {days.map((day: DayOfWeek) => {
-            const { engineerStates, isFullyBooked } = getSlotData(day, time)
+            const { engineerStates } = getSlotData(day, time)
             const hasAvailableEngineers = engineerStates.some((s: { status: 'available' | 'booked' }) => s.status === "available")
 
             return (
               <div
                 key={`${day}-${time}`}
-                className={`p-2 border-r border-gray-200 dark:border-gray-600 last:border-r-0 h-12 relative transition-all duration-150 ${
-                  isFullyBooked
-                    ? "bg-red-50 dark:bg-red-900/20"
-                    : hasAvailableEngineers
-                      ? "hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-pointer hover:shadow-sm"
-                      : "bg-white dark:bg-gray-800"
+                className={`p-2 border-r border-gray-200 dark:border-gray-600 last:border-r-0 h-12 relative ${
+                  engineerStates.some((s: { status: 'available' | 'booked' }) => s.status === 'booked')
+                    ? 'bg-red-50 dark:bg-red-900/20'
+                    : engineerStates.some((s: { status: 'available' | 'booked' }) => s.status === 'available')
+                      ? 'bg-blue-50 dark:bg-blue-900/20'
+                      : 'bg-white dark:bg-gray-800'
                 }`}
                 onClick={() => handleSlotClick(day, time)}
               >
-                {isFullyBooked && (
-                  <div className="absolute top-1 right-1">
-                    <div className="bg-red-500 text-white text-xs px-1 py-0.5 rounded text-[10px]">Booked</div>
-                  </div>
-                )}
-
                 <div className="flex flex-wrap gap-1 items-start justify-start">
                   {engineerStates.map(({ engineer, status, bookingDetails }: { engineer: Engineer, status: 'available' | 'booked', bookingDetails: BookedSlot }) => (
                     <EngineerBadge
