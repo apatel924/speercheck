@@ -7,8 +7,9 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "test": "react-scripts test",
-    "test:ci": "react-scripts test --watchAll=false --passWithNoTests"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --watchAll=false --passWithNoTests"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -62,6 +63,9 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-typescript": "^7.27.1",
     "@netlify/plugin-nextjs": "^5.11.4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -72,6 +76,7 @@
     "@types/react-dom": "^19",
     "babel-jest": "^30.0.2",
     "jest": "^30.0.3",
+    "jest-environment-jsdom": "^30.0.2",
     "postcss": "^8.5",
     "tailwindcss": "^3.4.17",
     "ts-jest": "^29.4.0",
