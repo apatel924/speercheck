@@ -27,57 +27,57 @@ export function SlotValidationModal({
 }: SlotValidationModalProps) {
   return (
     <Dialog open={true} onOpenChange={onCancel}>
-      <DialogContent className="sm:max-w-lg animate-in slide-in-from-bottom-4 duration-300">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom-4 duration-300">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-amber-500" />
+          <DialogTitle className="text-xs font-semibold flex items-center gap-2">
+            <AlertTriangle className="w-3 h-3 text-amber-500" />
             Time Slot Conflict
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <p className="text-amber-800 text-sm">
+        <div className="space-y-4 py-3">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-2">
+            <p className="text-amber-800 text-xs">
               The requested {duration}-minute time slot is not fully available. We found an alternative time that works
               for both participants.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4">
-            <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg">
-              <User className="w-5 h-5 text-blue-600" />
+          <div className="grid grid-cols-1 gap-3">
+            <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
+              <User className="w-3 h-3 text-blue-600" />
               <div>
-                <div className="font-medium text-gray-900">Candidate</div>
-                <div className="text-gray-600">{candidate.name}</div>
+                <div className="font-medium text-gray-900 text-sm">Candidate</div>
+                <div className="text-gray-600 text-xs">{candidate.name}</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg">
-              <Users className="w-5 h-5 text-green-600" />
+            <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg">
+              <Users className="w-3 h-3 text-green-600" />
               <div>
-                <div className="font-medium text-gray-900">Interviewer</div>
-                <div className="text-gray-600">{engineer.name}</div>
-                <div className="text-sm text-gray-500">{engineer.role}</div>
+                <div className="font-medium text-gray-900 text-sm">Interviewer</div>
+                <div className="text-gray-600 text-xs">{engineer.name}</div>
+                <div className="text-xs text-gray-500">{engineer.role}</div>
               </div>
             </div>
 
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-4 bg-red-50 rounded-lg border border-red-200">
-                <Calendar className="w-5 h-5 text-red-600" />
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 p-3 bg-red-50 rounded-lg border border-red-200">
+                <Calendar className="w-3 h-3 text-red-600" />
                 <div>
-                  <div className="font-medium text-gray-900">Requested Time (Not Available)</div>
-                  <div className="text-gray-600">
+                  <div className="font-medium text-gray-900 text-sm">Requested Time (Not Available)</div>
+                  <div className="text-gray-600 text-xs">
                     {requestedSlot.day}, {formatTime(requestedSlot.startTime)} -{" "}
                     {formatTime(getEndTime(requestedSlot.startTime, duration))}
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg border border-green-200">
-                <Calendar className="w-5 h-5 text-green-600" />
+              <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
+                <Calendar className="w-3 h-3 text-green-600" />
                 <div>
-                  <div className="font-medium text-gray-900">Suggested Alternative</div>
-                  <div className="text-gray-600">
+                  <div className="font-medium text-gray-900 text-sm">Suggested Alternative</div>
+                  <div className="text-gray-600 text-xs">
                     {suggestedSlot.day}, {formatTime(suggestedSlot.startTime)} -{" "}
                     {formatTime(getEndTime(suggestedSlot.startTime, duration))}
                   </div>
@@ -85,21 +85,21 @@ export function SlotValidationModal({
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg">
-              <Clock className="w-5 h-5 text-purple-600" />
+            <div className="flex items-center gap-2 p-3 bg-purple-50 rounded-lg">
+              <Clock className="w-3 h-3 text-purple-600" />
               <div>
-                <div className="font-medium text-gray-900">Duration</div>
-                <div className="text-gray-600">{duration} minutes</div>
+                <div className="font-medium text-gray-900 text-sm">Duration</div>
+                <div className="text-gray-600 text-xs">{duration} minutes</div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex gap-3 pt-4">
-          <Button variant="outline" onClick={onCancel} className="flex-1">
+        <div className="flex gap-2 pt-3">
+          <Button variant="outline" onClick={onCancel} className="flex-1 text-xs">
             Cancel
           </Button>
-          <Button onClick={onAccept} className="flex-1 bg-green-600 hover:bg-green-700">
+          <Button onClick={onAccept} className="flex-1 bg-green-600 hover:bg-green-700 text-xs">
             Accept Alternative Time
           </Button>
         </div>
