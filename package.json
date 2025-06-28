@@ -14,11 +14,8 @@
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "latest",
-    "@radix-ui/react-badge": "latest",
-    "@radix-ui/react-button": "latest",
     "@radix-ui/react-context-menu": "latest",
     "@radix-ui/react-dialog": "latest",
-    "@radix-ui/react-input": "latest",
     "@radix-ui/react-label": "latest",
     "@radix-ui/react-popover": "latest",
     "@radix-ui/react-switch": "latest",
