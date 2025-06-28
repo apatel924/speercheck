@@ -86,8 +86,7 @@ npm install
 
 2. Run Locally
    npm run dev
-
-# then open http://localhost:3000
+   then open http://localhost:3000
 
 3. Build & Start
    npm run build
