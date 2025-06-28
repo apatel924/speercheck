@@ -162,7 +162,7 @@ export default function SchedulerPage() {
     setValidationData(null)
   }
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <header
         className="
           bg-gradient-to-r from-slate-50 to-blue-100
@@ -201,15 +201,15 @@ export default function SchedulerPage() {
           </div>
         </div>
       </header>
-      <div style={{ display: "flex", height: "calc(100vh - 80px)" }}>
-        <div style={{ flex: 1, padding: "1.5rem" }}>
+      <div className="flex flex-grow overflow-hidden items-start">
+        <div className="flex-1 p-6 flex justify-center">
           <div
-            className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 rounded-xl shadow-lg border-2 border-blue-200 dark:border-gray-700 h-full"
+            className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 rounded-xl shadow-lg border-2 border-blue-200 dark:border-gray-700 h-[80vh] w-full overflow-auto"
           >
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Weekly Schedule</h2>
             </div>
-            <div style={{ padding: "1rem", height: "calc(100% - 60px)", overflow: "auto" }}>
+            <div className="p-4 h-full">
               <WeeklyCalendar
                 selectedCandidate={selectedCandidate}
                 selectedEngineers={selectedEngineers}
@@ -237,10 +237,12 @@ export default function SchedulerPage() {
             rounded-xl
             shadow-lg
             p-6
-            overflow-y-auto
+            overflow-auto
             mt-6
             mr-8
-            mb-6
+            mb-0
+            h-[80vh]
+            flex-shrink-0
           "
         >
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
