@@ -1,10 +1,15 @@
 "use client"
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { Calendar, Clock } from "lucide-react"
 import type { Candidate, Engineer } from "@/lib/types"
-import type { DayOfWeek, AvailabilitySlot } from "@/lib/types"
+import type { AvailabilitySlot } from "@/lib/types"
 import { formatTime } from "@/lib/utils"
 
 interface AvailabilityInfoModalProps {
@@ -15,11 +20,47 @@ interface AvailabilityInfoModalProps {
   type: "candidate" | "engineers"
 }
 
-const days: DayOfWeek[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+export function AvailabilityInfoModal({
+  open,
+  onClose,
+  candidate,
+  engineers,
+  type,
+}: AvailabilityInfoModalProps) {
+  const formatTimeRange = (start: string, end: string) =>
+    `${formatTime(start)}–${formatTime(end)}`
 
-export function AvailabilityInfoModal({ open, onClose, candidate, engineers, type }: AvailabilityInfoModalProps) {
-  const formatTimeRange = (start: string, end: string) => {
-    return `${formatTime(start)}–${formatTime(end)}`
+  function renderSlots(
+    availability: Record<string, AvailabilitySlot[]>,
+    bgClass: string,
+    textClass: string
+  ) {
+    return Object.entries(availability).map(([day, slots]) => (
+      <div key={day} className="flex items-start gap-4">
+        <div className="w-20 text-sm font-medium text-gray-700 dark:text-gray-300 pt-1">
+          {day}:
+        </div>
+        <div className="flex-1">
+          {slots.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {slots.map((slot, i) => (
+                <span
+                  key={i}
+                  className={`inline-flex items-center gap-1 px-3 py-1 ${bgClass} ${textClass} rounded-full text-sm`}
+                >
+                  <Clock className={`w-3 h-3 ${textClass}`} />
+                  {formatTimeRange(slot.start, slot.end)}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <span className="text-gray-400 dark:text-gray-500 text-sm">
+              Not available
+            </span>
+          )}
+        </div>
+      </div>
+    ))
   }
 
   return (
@@ -35,76 +76,44 @@ export function AvailabilityInfoModal({ open, onClose, candidate, engineers, typ
         <div className="space-y-6 py-4">
           {type === "candidate" && candidate && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{candidate.name}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                {candidate.name}
+              </h3>
               <div className="space-y-3">
-                {days.map((day: DayOfWeek) => {
-                  const daySlots = candidate.availability[day] || []
-                  return (
-                    <div key={day} className="flex items-start gap-4">
-                      <div className="w-20 text-sm font-medium text-gray-700 dark:text-gray-300 pt-1">{day}:</div>
-                      <div className="flex-1">
-                        {daySlots.length > 0 ? (
-                          <div className="flex flex-wrap gap-2">
-                            {daySlots.map((slot: AvailabilitySlot, index: number) => (
-                              <span
-                                key={index}
-                                className="inline-flex items-center gap-1 px-3 py-1 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300 rounded-full text-sm"
-                              >
-                                <Clock className="w-3 h-3 text-green-700 dark:text-green-300" />
-                                {formatTimeRange(slot.start, slot.end)}
-                              </span>
-                            ))}
-                          </div>
-                        ) : (
-                          <span className="text-gray-400 dark:text-gray-500 text-sm">Not available</span>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })}
+                {renderSlots(
+                  candidate.availability as Record<string, AvailabilitySlot[]>,
+                  "bg-green-50 dark:bg-green-900/30",
+                  "text-green-700 dark:text-green-300"
+                )}
               </div>
             </div>
           )}
 
           {type === "engineers" && engineers && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Engineers Availability</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                Engineers Availability
+              </h3>
               <Accordion type="multiple" className="w-full">
                 {engineers.map((engineer) => (
                   <AccordionItem key={engineer.id} value={engineer.id}>
                     <AccordionTrigger className="text-left">
                       <div>
-                        <div className="font-medium text-gray-900 dark:text-gray-100">{engineer.name}</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">{engineer.role}</div>
+                        <div className="font-medium text-gray-900 dark:text-gray-100">
+                          {engineer.name}
+                        </div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                          {engineer.role}
+                        </div>
                       </div>
                     </AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-3 pt-2">
-                        {days.map((day: DayOfWeek) => {
-                          const daySlots = engineer.availability[day] || []
-                          return (
-                            <div key={day} className="flex items-start gap-4">
-                              <div className="w-20 text-sm font-medium text-gray-700 dark:text-gray-300 pt-1">{day}:</div>
-                              <div className="flex-1">
-                                {daySlots.length > 0 ? (
-                                  <div className="flex flex-wrap gap-2">
-                                    {daySlots.map((slot: AvailabilitySlot, index: number) => (
-                                      <span
-                                        key={index}
-                                        className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 rounded-full text-sm"
-                                      >
-                                        <Clock className="w-3 h-3 text-blue-700 dark:text-blue-300" />
-                                        {formatTimeRange(slot.start, slot.end)}
-                                      </span>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <span className="text-gray-400 dark:text-gray-500 text-sm">Not available</span>
-                                )}
-                              </div>
-                            </div>
-                          )
-                        })}
+                        {renderSlots(
+                          engineer.availability as Record<string, AvailabilitySlot[]>,
+                          "bg-blue-50 dark:bg-blue-900/30",
+                          "text-blue-700 dark:text-blue-300"
+                        )}
                       </div>
                     </AccordionContent>
                   </AccordionItem>
