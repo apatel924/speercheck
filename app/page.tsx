@@ -183,7 +183,7 @@ export default function SchedulerPage() {
               <Image src={speerCheckLogo} alt="SpeerCheck Logo" width={35} height={35} style={{ filter: "invert(0)" }} />
               <div>
                 <h1 style={{ 
-                  fontSize: "3rem", 
+                  fontSize: "2rem", 
                   fontWeight: "bold", 
                   background: "linear-gradient(to right, #3b82f6, #4ade80)", 
                   WebkitBackgroundClip: "text", 
@@ -202,14 +202,14 @@ export default function SchedulerPage() {
         </div>
       </header>
       <div className="flex flex-grow overflow-hidden items-start">
-        <div className="flex-1 p-6 flex justify-center">
+        <div className="flex-1 p-4 flex justify-center">
           <div
             className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 rounded-xl shadow-lg border-2 border-blue-200 dark:border-gray-700 h-[80vh] w-full overflow-auto"
           >
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Weekly Schedule</h2>
             </div>
-            <div className="p-4 h-full">
+            <div className="p-2 h-full">
               <WeeklyCalendar
                 selectedCandidate={selectedCandidate}
                 selectedEngineers={selectedEngineers}
@@ -229,17 +229,17 @@ export default function SchedulerPage() {
 
         <div
           className="
-            w-80
+            w-64
             bg-gradient-to-br from-blue-50 to-blue-100
             dark:from-gray-900 dark:to-gray-800
             border-2 border-blue-200
             dark:border-gray-700
             rounded-xl
             shadow-lg
-            p-6
+            p-4
             overflow-auto
-            mt-6
-            mr-8
+            mt-4
+            mr-4
             mb-0
             h-[80vh]
             flex-shrink-0
@@ -248,10 +248,10 @@ export default function SchedulerPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
             <div>
               <h3
-                className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2"
+                className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2"
               >
                 <svg
-                  style={{ width: "1.25rem", height: "1.25rem", color: "#2563eb" }}
+                  style={{ width: "1rem", height: "1rem", color: "#2563eb" }}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -359,7 +359,7 @@ export default function SchedulerPage() {
       <AvailabilityInfoModal
         open={availabilityModal.open}
         onClose={() => setAvailabilityModal({ open: false, type: "candidate" })}
-        candidate={availabilityModal.type === "candidate" ? selectedCandidate : undefined}
+        candidate={availabilityModal.type === "candidate" && selectedCandidate ? selectedCandidate : undefined}
         engineers={availabilityModal.type === "engineers" ? selectedEngineers : undefined}
         type={availabilityModal.type}
       />
