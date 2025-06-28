@@ -41,27 +41,27 @@ export function CandidateSelector({ candidates, selectedCandidate, onSelect }: C
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-96 p-0 shadow-lg border-gray-200 dark:border-gray-700 rounded-xl" align="start">
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+      <PopoverContent className="w-72 p-0 shadow-lg border-gray-200 dark:border-gray-700 rounded-xl" align="start">
+        <div className="p-2 border-b border-gray-200 dark:border-gray-700">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
             <Input
               placeholder="Search candidates..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 border-gray-300 dark:border-gray-600 rounded-lg"
+              className="pl-8 border-gray-300 dark:border-gray-600 rounded-lg h-8 text-sm"
             />
           </div>
         </div>
 
-        <div className="max-h-80 overflow-y-auto p-2">
+        <div className="max-h-60 overflow-y-auto p-1">
           {filteredCandidates.map((candidate) => {
             const isSelected = selectedCandidate?.id === candidate.id
 
             return (
               <div
                 key={candidate.id}
-                className={`flex items-center gap-3 p-3 m-1 rounded-lg transition-all duration-150 cursor-pointer ${
+                className={`flex items-center gap-2 p-2 m-0.5 rounded-lg transition-all duration-150 cursor-pointer ${
                   isSelected
                     ? "bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700"
                     : "hover:bg-gray-50 dark:hover:bg-gray-700 border border-transparent"
@@ -73,20 +73,20 @@ export function CandidateSelector({ candidates, selectedCandidate, onSelect }: C
                 }}
               >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${candidate.color}`}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-medium ${candidate.color}`}
                 >
                   {candidate.name.split(" ").map(n => n[0]).join("").slice(0,2)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-gray-900 dark:text-gray-100 truncate">{candidate.name}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400 truncate">{candidate.email}</div>
+                  <div className="font-medium text-gray-900 dark:text-gray-100 truncate text-sm">{candidate.name}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 truncate">{candidate.email}</div>
                 </div>
               </div>
             )
           })}
 
           {filteredCandidates.length === 0 && (
-            <div className="p-4 text-center text-gray-500 dark:text-gray-400">No candidates found</div>
+            <div className="p-2 text-center text-gray-500 dark:text-gray-400 text-sm">No candidates found</div>
           )}
         </div>
       </PopoverContent>
