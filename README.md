@@ -1,46 +1,119 @@
-# Getting Started with Create React App
+# SpeerCheck Live
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**A React & Next.js internal tool** for recruiters to effortlessly schedule candidate interviews based on team availability.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Live Demo
 
-### `npm start`
+🔗 [View Live Demo](https://your-deployment-url.com)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 🎥 Demo Walkthrough
 
-### `npm test`
+Refer to [`DEMO_WALKTHROUGH.md`](./DEMO_WALKTHROUGH.md) for a full scripted recording flow, including feature shots and unit-test runs.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 📐 Design Iterations
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. **Iteration 1**  
+   ![Iteration 1](./src/speer_check_V1.png)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   - Initial wireframe with single-color badges and basic calendar grid.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. **Iteration 2**  
+   ![Iteration 2](./src/speer_check_V2.png)
 
-### `npm run eject`
+   - Added multi-engineer color coding, hover tooltips, and duration toggle.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+3. **Final Iteration**  
+   ![Final Iteration](./src/speer_check_V3.png)
+   - Refined UX with conflict-resolution modals, full availability views, and dark mode support.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## ⚙️ Core Features
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- **Dynamic Calendar Grid**
 
-## Learn More
+  - Monday to Friday, 9 AM–6 PM with 30 / 60-minute slot options.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **Availability Intersection**
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+  - Displays only slots shared by the selected candidate and engineers.
+
+- **Booking Flow**
+
+  1. Empty state: prompts to “Select a candidate first.”
+  2. Confirmation modal showing candidate, engineer, date/time, duration, and format.
+  3. Booked slots locked with a red badge and lock icon, plus hover popup details.
+  4. Conflict-resolution modal with auto-suggested alternative time slots.
+
+- **Full Availability Overviews**
+
+  - “ℹ️” icon opens modal showing candidate or engineer’s full availability window.
+
+- **Filter: Show Only Bookings**
+
+  - Toggle to display confirmed interviews only.
+
+- **Light & Dark Mode**
+  - Instant toggle via the top-right UI switch.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js v15, React v19, TypeScript
+- **Styling**: Tailwind CSS, Radix UI primitives
+- **Forms & State**: React Hook Form, VAUL (local JSON)
+- **Date Handling**: date-fns
+- **Components**: Lucide-React, cmdk, Recharts
+- **Animation**: tailwindcss-animate, embla-carousel
+- **Testing**: Jest, React Testing Library
+
+---
+
+## ⚡ Getting Started
+
+### 1. Clone & Install
+
+git clone git@github.com:yourorg/speercheck.git
+cd speercheck
+npm install
+
+2. Run Locally
+   npm run dev
+
+# then open http://localhost:3000
+
+3. Build & Start
+   npm run build
+   npm run start
+   ✅ Running Tests
+   npm test
+   Test coverage includes:
+
+Candidate availability modal
+Engineers accordion view
+Modal open/close callbacks
+Conflict-resolution logic
+
+📦 Deployment
+Configured for Vercel or Netlify:
+Push to main → automatic deployment.
+Ensure required environment variables are set in your hosting dashboard.
+
+🤝 Contributing
+Fork the repository
+Create a feature branch:
+git checkout -b feat/your-feature
+Commit your changes:
+git commit -m "feat: add your feature"
+Push & open a Pull Request
+Please ensure all tests pass locally before merging.
+
+📄 License
+MIT © Ashish Patel
