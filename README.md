@@ -79,10 +79,9 @@ Refer to [`DEMO_WALKTHROUGH.md`](./DEMO_WALKTHROUGH.md) for a full scripted reco
 ## ⚡ Getting Started
 
 1. Clone & Install
-
-git clone git@github.com:yourorg/speercheck.git
-cd speercheck
-npm install
+   git clone git@github.com:yourorg/speercheck.git
+   cd speercheck
+   npm install
 
 2. Run Locally
    npm run dev
