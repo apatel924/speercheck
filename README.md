@@ -6,7 +6,7 @@
 
 ## 🚀 Live Demo
 
-🔗 [View Live Demo](https://your-deployment-url.com)
+🔗 [View Live Demo](https://speercheckinterview.netlify.app/)
 
 ---
 
