@@ -12,7 +12,7 @@
 
 ## 🎥 Demo Walkthrough
 
-Refer to [`DEMO_WALKTHROUGH.md`](./DEMO_WALKTHROUGH.md) for a full scripted recording flow, including feature shots and unit-test runs.
+Refer to [`DEMO_WALKTHROUGH.md`](https://www.loom.com/share/f64a45972e8846a6989f550bdb6fd3e4?sid=3bc3a922-05fc-4e9f-8754-8c4a85f7fedd) for a full scripted recording flow, including feature shots and unit-test runs.
 
 ---
 
